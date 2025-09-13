@@ -74,25 +74,74 @@ export default {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+        "typewriter": {
+          from: { width: "0" },
+          to: { width: "100%" },
+        },
+        "blink": {
+          "0%, 50%": { borderColor: "transparent" },
+          "51%, 100%": { borderColor: "hsl(217 91% 60%)" },
+        },
+        "reveal-up": {
           from: {
-            height: "var(--radix-accordion-content-height)",
+            opacity: "0",
+            transform: "translateY(30px)",
           },
           to: {
-            height: "0",
+            opacity: "1",
+            transform: "translateY(0)",
           },
+        },
+        "scale-in": {
+          from: {
+            opacity: "0",
+            transform: "scale(0.9)",
+          },
+          to: {
+            opacity: "1",
+            transform: "scale(1)",
+          },
+        },
+        "pulse-glow": {
+          "0%, 100%": {
+            boxShadow: "0 0 20px hsl(217 91% 60% / 0.3)",
+          },
+          "50%": {
+            boxShadow: "0 0 40px hsl(217 91% 60% / 0.6)",
+          },
+        },
+        "gradient-shift": {
+          "0%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "100% 50%" },
+          "100%": { backgroundPosition: "0% 50%" },
+        },
+        "spin-slow": {
+          from: { transform: "rotate(0deg)" },
+          to: { transform: "rotate(360deg)" },
+        },
+        "float": {
+          "0%, 100%": { transform: "translateY(0px)" },
+          "50%": { transform: "translateY(-20px)" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "typewriter": "typewriter 3s steps(30) 1s both",
+        "blink": "blink 1s step-end infinite",
+        "reveal-up": "reveal-up 0.6s ease-out",
+        "scale-in": "scale-in 0.4s ease-out",
+        "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        "gradient-shift": "gradient-shift 3s ease infinite",
+        "spin-slow": "spin-slow 8s linear infinite",
+        "float": "float 6s ease-in-out infinite",
       },
     },
   },
