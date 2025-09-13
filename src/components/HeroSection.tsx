@@ -10,34 +10,35 @@ export const HeroSection = () => {
           <div className="space-y-8">
             <div className="space-y-4">
               <h1 className="text-5xl lg:text-7xl font-bold leading-tight">
-                <span className="text-foreground">ЦИФРОВЫЕ</span><br />
-                <span className="text-foreground">РЕШЕНИЯ</span><br />
-                <span className="text-gradient">ДЛЯ БИЗНЕСА</span>
+                <span className="text-foreground">ПРИВЕТ, Я</span><br />
+                <span className="text-gradient">НИКИТА</span><br />
+                <span className="text-foreground">СОЗДАЮ ИНТЕЛЛЕКТУАЛЬНЫЕ</span><br />
+                <span className="text-gradient">ВЕБ-РЕШЕНИЯ</span>
               </h1>
               
               <p className="text-xl text-muted-foreground max-w-lg">
-                Автоматизируем процессы, внедряем новые технологии, увеличиваем прибыль!
+                Разработчик, увлеченный нейросетями и созданием эффективных веб-проектов. Превращаю идеи в код.
               </p>
             </div>
 
             <Button className="btn-hero px-8 py-4 text-lg rounded-lg group">
-              Узнать, как это работает
+              Связаться со мной
               <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
 
             {/* Stats */}
             <div className="flex space-x-8 pt-8">
               <div className="text-center">
-                <div className="text-3xl font-bold text-gradient">200+</div>
+                <div className="text-3xl font-bold text-gradient">2+</div>
+                <div className="text-sm text-muted-foreground">Года опыта</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-gradient">10+</div>
                 <div className="text-sm text-muted-foreground">Проектов</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-gradient">150+</div>
-                <div className="text-sm text-muted-foreground">Клиентов</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-gradient">5</div>
-                <div className="text-sm text-muted-foreground">Лет опыта</div>
+                <div className="text-3xl font-bold text-gradient">16</div>
+                <div className="text-sm text-muted-foreground">Лет</div>
               </div>
             </div>
           </div>
@@ -62,7 +63,7 @@ export const HeroSection = () => {
               <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                 <div className="w-48 h-48 glass rounded-2xl flex items-center justify-center">
                   <div className="w-32 h-32 bg-gradient-primary rounded-xl flex items-center justify-center">
-                    <div className="text-4xl font-bold text-white">ЦО</div>
+                    <div className="text-3xl font-bold text-white">kAI</div>
                   </div>
                 </div>
               </div>

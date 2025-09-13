@@ -31,11 +31,11 @@ export const ContactSection = () => {
         {/* Header */}
         <div className="text-center mb-16">
           <h2 className="text-4xl lg:text-5xl font-bold mb-6">
-            <span className="text-foreground">СВЯЖИТЕСЬ</span>{' '}
-            <span className="text-gradient">С НАМИ</span>
+            <span className="text-foreground">ДАВАЙТЕ РАБОТАТЬ</span>{' '}
+            <span className="text-gradient">ВМЕСТЕ</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Готовы обсудить ваш проект? Мы всегда рады новым вызовам и интересным задачам
+            Готов обсудить ваш проект или ответить на вопросы. Свяжитесь со мной удобным способом
           </p>
         </div>
 
@@ -44,26 +44,26 @@ export const ContactSection = () => {
           <div className="space-y-8">
             <div>
               <h3 className="text-2xl font-bold text-foreground mb-6">
-                Наши контакты
+                Мои контакты
               </h3>
               <div className="space-y-6">
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center">
-                    <Phone className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <div className="text-foreground font-semibold">Телефон</div>
-                    <div className="text-muted-foreground">+7 (999) 123-45-67</div>
-                  </div>
-                </div>
-
                 <div className="flex items-center space-x-4">
                   <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center">
                     <Mail className="w-6 h-6 text-white" />
                   </div>
                   <div>
                     <div className="text-foreground font-semibold">Email</div>
-                    <div className="text-muted-foreground">info@digital-base.ru</div>
+                    <div className="text-muted-foreground">nikita@kaigo.dev</div>
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center">
+                    <Phone className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <div className="text-foreground font-semibold">Telegram</div>
+                    <div className="text-muted-foreground">@nikita_kaigo</div>
                   </div>
                 </div>
 
@@ -72,46 +72,48 @@ export const ContactSection = () => {
                     <MapPin className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <div className="text-foreground font-semibold">Адрес</div>
-                    <div className="text-muted-foreground">г. Москва, ул. Примерная, д. 123</div>
+                    <div className="text-foreground font-semibold">Локация</div>
+                    <div className="text-muted-foreground">Россия</div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Working Hours */}
+            {/* Social Links */}
             <div className="glass p-6 rounded-2xl">
               <h4 className="text-lg font-semibold text-foreground mb-4">
-                Часы работы
+                Социальные сети
               </h4>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Пн - Пт:</span>
-                  <span className="text-foreground">9:00 - 18:00</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Сб:</span>
-                  <span className="text-foreground">10:00 - 16:00</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Вс:</span>
-                  <span className="text-foreground">Выходной</span>
-                </div>
+              <div className="space-y-3">
+                <a href="#" className="flex items-center space-x-3 text-muted-foreground hover:text-primary transition-colors">
+                  <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <span className="text-primary font-bold text-sm">GH</span>
+                  </div>
+                  <span>GitHub</span>
+                </a>
+                <a href="#" className="flex items-center space-x-3 text-muted-foreground hover:text-primary transition-colors">
+                  <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <span className="text-primary font-bold text-sm">TG</span>
+                  </div>
+                  <span>Telegram</span>
+                </a>
+                <a href="#" className="flex items-center space-x-3 text-muted-foreground hover:text-primary transition-colors">
+                  <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <span className="text-primary font-bold text-sm">LI</span>
+                  </div>
+                  <span>LinkedIn</span>
+                </a>
               </div>
             </div>
 
-            {/* Online Status */}
+            {/* Availability Status */}
             <div className="glass p-6 rounded-2xl">
               <div className="flex items-center space-x-3">
                 <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
                 <div>
-                  <div className="text-foreground font-semibold">Клиентский менеджер - Татьяна</div>
-                  <div className="text-sm text-muted-foreground">Сейчас онлайн</div>
+                  <div className="text-foreground font-semibold">Доступен для проектов</div>
+                  <div className="text-sm text-muted-foreground">Готов к новым вызовам!</div>
                 </div>
-              </div>
-              <div className="mt-3 text-sm text-muted-foreground">
-                Здравствуйте, чем могу помочь?<br />
-                Есть вопросы? Я на связи!
               </div>
             </div>
           </div>
@@ -119,7 +121,7 @@ export const ContactSection = () => {
           {/* Contact Form */}
           <div className="glass p-8 rounded-2xl">
             <h3 className="text-2xl font-bold text-foreground mb-6">
-              Отправить сообщение
+              Расскажите о вашем проекте
             </h3>
 
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -182,12 +184,12 @@ export const ContactSection = () => {
                   onChange={handleChange}
                   rows={4}
                   className="bg-muted/50 border-border resize-none"
-                  placeholder="Расскажите о вашем проекте..."
+                  placeholder="Опишите вашу задачу, бюджет и сроки..."
                 />
               </div>
 
               <Button type="submit" className="btn-hero w-full py-3 text-lg rounded-lg group">
-                Отправить сообщение
+                Обсудить проект
                 <Send className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
             </form>

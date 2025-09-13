@@ -1,75 +1,63 @@
 import { Button } from '@/components/ui/button';
 import { ExternalLink, ArrowRight } from 'lucide-react';
 
-const cases = [
+const projects = [
   {
-    title: 'Автоматизация CRM для производственной компании',
-    category: 'Автоматизация',
-    description: 'Внедрили CRM-систему, которая увеличила конверсию на 45% и сократила время обработки заявок в 3 раза',
+    title: 'AI Telegram-бот для автоматизации',
+    category: 'AI & Автоматизация',
+    description: 'Разработал умного Telegram-бота с интеграцией GPT API для автоматизации обработки запросов и предоставления персональных рекомендаций.',
     results: [
-      'Увеличение конверсии на 45%',
-      'Сокращение времени обработки заявок в 3 раза',
-      'Автоматизация 80% рутинных процессов',
+      'Обработка 500+ запросов в день',
+      'Сокращение времени ответа до 5 секунд',
+      'Автоматизация 90% типовых запросов',
     ],
-    tags: ['CRM', 'Автоматизация', 'Интеграции'],
+    tags: ['Python', 'Telegram API', 'GPT', 'AI'],
     image: '/api/placeholder/600/400',
   },
   {
-    title: 'Интернет-магазин с интеграцией 1С',
-    category: 'E-commerce',
-    description: 'Разработали высокопроизводительный интернет-магазин с полной интеграцией с системой учета 1С',
+    title: 'Веб-приложение для анализа данных',
+    category: 'Веб-разработка',
+    description: 'Создал полнофункциональное веб-приложение для анализа и визуализации больших объемов данных с интерактивными дашбордами.',
     results: [
-      'Рост онлайн-продаж на 200%',
-      'Автоматическая синхронизация остатков',
-      'Сокращение времени на обработку заказов на 60%',
+      'Обработка файлов до 100MB',
+      'Интерактивные графики и чарты',
+      'Экспорт отчетов в различных форматах',
     ],
-    tags: ['E-commerce', '1С', 'Веб-разработка'],
+    tags: ['React', 'Python', 'FastAPI', 'Data Visualization'],
     image: '/api/placeholder/600/400',
   },
   {
-    title: 'Мобильное приложение для доставки',
-    category: 'Мобильная разработка',
-    description: 'Создали мобильное приложение для службы доставки с GPS-трекингом и системой уведомлений',
+    title: 'Система управления контентом',
+    category: 'Full-stack',
+    description: 'Разработал CMS с админ-панелью для управления контентом сайта, включая систему пользователей и права доступа.',
     results: [
-      'Увеличение количества заказов на 150%',
-      'Сокращение времени доставки на 30%',
-      'Повышение лояльности клиентов',
+      'Удобная админ-панель',
+      'Система ролей и прав',
+      'SEO-оптимизация контента',
     ],
-    tags: ['Mobile', 'iOS', 'Android', 'GPS'],
-    image: '/api/placeholder/600/400',
-  },
-  {
-    title: 'Корпоративный портал для финансовой компании',
-    category: 'Корпоративные решения',
-    description: 'Разработали защищенный корпоративный портал с системой документооборота и аналитикой',
-    results: [
-      'Ускорение документооборота в 4 раза',
-      'Повышение информационной безопасности',
-      'Внедрение системы аналитики',
-    ],
-    tags: ['Портал', 'Безопасность', 'Аналитика'],
+    tags: ['Next.js', 'TypeScript', 'PostgreSQL', 'Prisma'],
     image: '/api/placeholder/600/400',
   },
 ];
 
-export const CasesSection = () => {
+export const ProjectsSection = () => {
   return (
-    <section className="py-20 relative">
+    <section id="projects" className="py-20 relative">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-16">
           <h2 className="text-4xl lg:text-5xl font-bold mb-6">
-            <span className="text-foreground">НАШИ</span>{' '}
-            <span className="text-gradient">КЕЙСЫ</span>
+            <span className="text-foreground">МОИ</span>{' '}
+            <span className="text-gradient">ПРОЕКТЫ</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Примеры успешных проектов, которые помогли нашим клиентам достичь новых высот
+            Практические проекты, демонстрирующие мои навыки в области AI и веб-разработки
           </p>
         </div>
 
-        {/* Cases Grid */}
+        {/* Projects Grid */}
         <div className="grid lg:grid-cols-2 gap-8 mb-16">
-          {cases.map((caseItem, index) => (
+          {projects.map((project, index) => (
             <div
               key={index}
               className="service-card rounded-2xl overflow-hidden group"
@@ -84,7 +72,7 @@ export const CasesSection = () => {
                 </div>
                 <div className="absolute top-4 left-4">
                   <span className="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm">
-                    {caseItem.category}
+                    {project.category}
                   </span>
                 </div>
               </div>
@@ -92,18 +80,18 @@ export const CasesSection = () => {
               {/* Content */}
               <div className="p-8">
                 <h3 className="text-2xl font-bold text-foreground mb-4 group-hover:text-primary transition-colors">
-                  {caseItem.title}
+                  {project.title}
                 </h3>
 
                 <p className="text-muted-foreground mb-6 leading-relaxed">
-                  {caseItem.description}
+                  {project.description}
                 </p>
 
                 {/* Results */}
                 <div className="mb-6">
-                  <h4 className="text-lg font-semibold text-foreground mb-3">Результаты:</h4>
+                  <h4 className="text-lg font-semibold text-foreground mb-3">Особенности:</h4>
                   <ul className="space-y-2">
-                    {caseItem.results.map((result, resultIndex) => (
+                    {project.results.map((result, resultIndex) => (
                       <li key={resultIndex} className="flex items-start text-sm text-muted-foreground">
                         <div className="w-1.5 h-1.5 bg-primary rounded-full mr-3 mt-2 flex-shrink-0"></div>
                         {result}
@@ -114,7 +102,7 @@ export const CasesSection = () => {
 
                 {/* Tags */}
                 <div className="flex flex-wrap gap-2 mb-6">
-                  {caseItem.tags.map((tag, tagIndex) => (
+                  {project.tags.map((tag, tagIndex) => (
                     <span
                       key={tagIndex}
                       className="bg-muted text-muted-foreground px-3 py-1 rounded-full text-xs"
@@ -126,7 +114,7 @@ export const CasesSection = () => {
 
                 {/* Action */}
                 <Button variant="outline" className="w-full group-hover:bg-primary group-hover:text-white transition-colors">
-                  Подробнее о проекте
+                  Подробнее
                   <ExternalLink className="w-4 h-4 ml-2" />
                 </Button>
               </div>
@@ -134,10 +122,10 @@ export const CasesSection = () => {
           ))}
         </div>
 
-        {/* View All Cases */}
+        {/* View All Projects */}
         <div className="text-center">
           <Button className="btn-hero px-8 py-4 text-lg rounded-lg group">
-            Посмотреть все кейсы
+            GitHub репозиторий
             <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
           </Button>
         </div>
