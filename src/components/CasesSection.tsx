@@ -133,3 +133,6 @@ export const ProjectsSection = () => {
     </section>
   );
 };
+
+// Export with the new name for consistency
+export { ProjectsSection as CasesSection };

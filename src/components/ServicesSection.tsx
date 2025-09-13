@@ -75,3 +75,6 @@ export const SkillsSection = () => {
     </section>
   );
 };
+
+// Export with the new name for consistency
+export { SkillsSection as ServicesSection };
