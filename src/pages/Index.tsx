@@ -7,12 +7,12 @@ import { ProjectsSection } from '@/components/CasesSection';
 import { TestimonialsSection } from '@/components/TestimonialsSection';
 import { ContactSection } from '@/components/ContactSection';
 import { Footer } from '@/components/Footer';
-import { CustomCursor } from '@/components/CustomCursor';
+import { OurAdvantages } from '@/components/OurAdvantages';
+import { ClientTestimonials } from '@/components/ClientTestimonials';
 
 const Index = () => {
   return (
     <div className="relative min-h-screen">
-      <CustomCursor />
       <ParticleBackground />
       <Navigation />
       <main className="relative z-10">
@@ -20,7 +20,8 @@ const Index = () => {
         <AboutSection />
         <SkillsSection />
         <ProjectsSection />
-        <TestimonialsSection />
+        <OurAdvantages />
+        <ClientTestimonials />
         <ContactSection />
       </main>
       <Footer />
