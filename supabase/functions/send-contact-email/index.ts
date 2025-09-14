@@ -111,10 +111,11 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log('Saved to database:', data);
 
-    // Send email notification
+    // Send email notification - use environment variable for recipient
+    const adminEmail = Deno.env.get('ADMIN_EMAIL') || 'nikitanovyj1@gmail.com';
     const emailResponse = await resend.emails.send({
       from: "Portfolio Contact <onboarding@resend.dev>",
-      to: ["nikitanovyj1@gmail.com"],
+      to: [adminEmail],
       subject: `Новая заявка от ${sanitizedData.name}`,
       html: `
         <h2>Новая заявка с сайта-портфолио</h2>

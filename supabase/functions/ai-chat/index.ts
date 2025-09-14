@@ -14,10 +14,32 @@ serve(async (req) => {
   }
 
   try {
+    // Get JWT token from Authorization header
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return new Response(JSON.stringify({ error: 'Authentication required' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const token = authHeader.substring(7);
+    
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+      Deno.env.get('SUPABASE_ANON_KEY') ?? ''
     );
+
+    // Verify user authentication
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser(token);
+    
+    if (authError || !user) {
+      console.error('Authentication failed:', authError);
+      return new Response(JSON.stringify({ error: 'Invalid authentication' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
     const { 
       message, 
@@ -27,10 +49,15 @@ serve(async (req) => {
       userEmail 
     } = await req.json();
 
-    console.log('AI Chat request:', { message, conversationId, userSessionId });
+    console.log('AI Chat request:', { message, conversationId, userSessionId, userId: user.id });
 
-    // Get AI settings
-    const { data: aiSettings, error: settingsError } = await supabaseClient
+    // Get AI settings using service role key for admin-only data
+    const supabaseAdmin = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+
+    const { data: aiSettings, error: settingsError } = await supabaseAdmin
       .from('ai_settings')
       .select('*')
       .limit(1)
@@ -58,9 +85,10 @@ serve(async (req) => {
       const { data: newConversation, error: convError } = await supabaseClient
         .from('ai_conversations')
         .insert({
+          user_id: user.id,
           user_session_id: userSessionId,
-          user_name: userName,
-          user_email: userEmail,
+          user_name: userName || user.email?.split('@')[0] || 'Пользователь',
+          user_email: userEmail || user.email,
           title: message.substring(0, 50) + (message.length > 50 ? '...' : '')
         })
         .select()

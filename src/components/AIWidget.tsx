@@ -10,6 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useChatHistory } from '@/hooks/useChatHistory';
 import { useVoiceRecording } from '@/hooks/useVoiceRecording';
 import { useOutsideClick } from '@/hooks/useOutsideClick';
+import { useAuth } from '@/hooks/useAuth';
 import AIWidgetBubble from './AIWidgetBubble';
 
 interface Message {
@@ -33,6 +34,7 @@ const AIWidget: React.FC<AIWidgetProps> = ({ isEnabled = true }) => {
   const [windowSize, setWindowSize] = useState({ width: 320, height: 384 });
   
   const { toast } = useToast();
+  const { user, session } = useAuth();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   
@@ -85,6 +87,16 @@ const AIWidget: React.FC<AIWidgetProps> = ({ isEnabled = true }) => {
   const sendMessage = async () => {
     if (!inputValue.trim() || isLoading) return;
 
+    // Check if user is authenticated
+    if (!user || !session) {
+      toast({
+        title: "Требуется авторизация",
+        description: "Для использования AI-ассистента необходимо войти в систему.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
@@ -103,8 +115,8 @@ const AIWidget: React.FC<AIWidgetProps> = ({ isEnabled = true }) => {
           message: inputValue,
           conversationId,
           userSessionId,
-          userName: 'Гость',
-          userEmail: null
+          userName: user.email?.split('@')[0] || 'Пользователь',
+          userEmail: user.email
         }
       });
 
@@ -172,6 +184,14 @@ const AIWidget: React.FC<AIWidgetProps> = ({ isEnabled = true }) => {
   };
 
   const handleOpenChat = () => {
+    if (!user) {
+      toast({
+        title: "Требуется авторизация",
+        description: "Для использования AI-ассистента необходимо войти в систему.",
+        variant: "destructive",
+      });
+      return;
+    }
     setIsOpen(true);
     setShowBubble(false);
   };
