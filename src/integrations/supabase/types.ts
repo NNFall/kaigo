@@ -14,6 +14,110 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_conversations: {
+        Row: {
+          created_at: string
+          id: string
+          status: string
+          title: string | null
+          updated_at: string
+          user_email: string | null
+          user_name: string | null
+          user_session_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          status?: string
+          title?: string | null
+          updated_at?: string
+          user_email?: string | null
+          user_name?: string | null
+          user_session_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          status?: string
+          title?: string | null
+          updated_at?: string
+          user_email?: string | null
+          user_name?: string | null
+          user_session_id?: string
+        }
+        Relationships: []
+      }
+      ai_messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          role: string
+          tokens_used: number | null
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          role: string
+          tokens_used?: number | null
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          role?: string
+          tokens_used?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "ai_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_settings: {
+        Row: {
+          api_key: string
+          created_at: string
+          id: string
+          max_tokens: number
+          model: string
+          system_prompt: string
+          temperature: number
+          updated_at: string
+          widget_enabled: boolean
+        }
+        Insert: {
+          api_key: string
+          created_at?: string
+          id?: string
+          max_tokens?: number
+          model?: string
+          system_prompt?: string
+          temperature?: number
+          updated_at?: string
+          widget_enabled?: boolean
+        }
+        Update: {
+          api_key?: string
+          created_at?: string
+          id?: string
+          max_tokens?: number
+          model?: string
+          system_prompt?: string
+          temperature?: number
+          updated_at?: string
+          widget_enabled?: boolean
+        }
+        Relationships: []
+      }
       contact_requests: {
         Row: {
           contact: string

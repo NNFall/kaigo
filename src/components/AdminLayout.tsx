@@ -43,6 +43,11 @@ const menuItems = [
     icon: MessageCircle,
   },
   {
+    title: 'Настройки AI',
+    url: '/admin/ai-settings',
+    icon: Settings,
+  },
+  {
     title: 'Управление',
     url: '/admin/management',
     icon: Settings,

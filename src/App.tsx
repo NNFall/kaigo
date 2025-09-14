@@ -15,6 +15,7 @@ import AdminLayout from "./components/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
 import Requests from "./pages/admin/Requests";
 import Dialogues from "./pages/admin/Dialogues";
+import AISettings from "./pages/admin/AISettings";
 import Management from "./pages/admin/Management";
 import NotFound from "./pages/NotFound";
 
@@ -38,6 +39,7 @@ const App = () => (
               <Route index element={<Dashboard />} />
               <Route path="requests" element={<Requests />} />
               <Route path="dialogues" element={<Dialogues />} />
+              <Route path="ai-settings" element={<AISettings />} />
               <Route path="management" element={<Management />} />
             </Route>
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

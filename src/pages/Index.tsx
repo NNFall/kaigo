@@ -9,6 +9,7 @@ import { ContactSection } from '@/components/ContactSection';
 import { Footer } from '@/components/Footer';
 import { OurAdvantages } from '@/components/OurAdvantages';
 import { ClientTestimonials } from '@/components/ClientTestimonials';
+import AIWidget from '@/components/AIWidget';
 
 const Index = () => {
   return (
@@ -25,6 +26,7 @@ const Index = () => {
         <ContactSection />
       </main>
       <Footer />
+      <AIWidget />
     </div>
   );
 };
