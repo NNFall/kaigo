@@ -2,19 +2,25 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { KaigoTypingEffect } from '@/components/KaigoTypingEffect';
+import { ContactModal } from '@/components/ContactModal';
+import { useState } from 'react';
 
 export const HeroSection = () => {
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+
   return (
     <section className="relative min-h-screen flex items-center justify-center pt-20 pb-10" id="hero">
       <div className="container mx-auto px-4">
         <AnimatedSection>
           <KaigoTypingEffect />
           <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg" className="btn-hero group">
-              <a href="#contact" className="flex items-center">
-                Связаться со мной
-                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-              </a>
+            <Button 
+              size="lg" 
+              className="btn-hero group"
+              onClick={() => setIsContactModalOpen(true)}
+            >
+              Связаться со мной
+              <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </Button>
           </div>
         </AnimatedSection>
@@ -35,6 +41,11 @@ export const HeroSection = () => {
           </AnimatedSection>
         </div>
       </div>
+
+      <ContactModal 
+        isOpen={isContactModalOpen} 
+        onClose={() => setIsContactModalOpen(false)} 
+      />
     </section>
   );
 };

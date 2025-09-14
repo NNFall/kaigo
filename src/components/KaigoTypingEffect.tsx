@@ -36,7 +36,9 @@ export const KaigoTypingEffect = () => {
             : 'opacity-0 transform translate-y-10'
         }`}
       >
-        <span className="gradient-text">Kaigo</span>
+        <span className="text-foreground">k</span>
+        <span className="gradient-text">AI</span>
+        <span className="text-foreground">go</span>
       </h1>
 
       {/* Subtitle with typing effect */}
@@ -48,9 +50,7 @@ export const KaigoTypingEffect = () => {
               : 'opacity-0 transform translate-y-5'
           }`}
         >
-          <span className="text-primary font-bold">К</span>{' '}
-          <span className="text-accent font-bold">AI</span>{' '}
-          <span className="text-secondary font-bold">идём</span>
+          Путь к нейросетям
           {showSubtitle && (
             <span className="inline-block ml-2 w-0.5 h-8 bg-primary animate-pulse" />
           )}

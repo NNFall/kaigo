@@ -5,6 +5,7 @@ import { AnimatedSection } from '@/components/AnimatedSection';
 import { ParticleBackground } from '@/components/ParticleBackground';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { ContactModal } from '@/components/ContactModal';
 import { Link } from 'react-router-dom';
 import { ExternalLink, Github, ArrowRight, Filter } from 'lucide-react';
 
@@ -75,6 +76,7 @@ const categories = ["Все проекты", "Голосовые ассисте�
 
 const Projects = () => {
   const [selectedCategory, setSelectedCategory] = useState("Все проекты");
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
 
   const filteredProjects = selectedCategory === "Все проекты" 
     ? projects 
@@ -214,7 +216,11 @@ const Projects = () => {
                 <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
                   Обсудим ваши задачи и создадим AI-решение, которое выведет ваш бизнес на новый уровень
                 </p>
-                <Button size="lg" className="btn-hero">
+                <Button 
+                  size="lg" 
+                  className="btn-hero"
+                  onClick={() => setIsContactModalOpen(true)}
+                >
                   Обсудить проект
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
@@ -224,6 +230,10 @@ const Projects = () => {
         </section>
       </main>
       
+      <ContactModal 
+        isOpen={isContactModalOpen} 
+        onClose={() => setIsContactModalOpen(false)} 
+      />
       <Footer />
     </div>
   );

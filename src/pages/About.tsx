@@ -1,11 +1,15 @@
+import { useState } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { AnimatedSection } from '@/components/AnimatedSection';
 import { ParticleBackground } from '@/components/ParticleBackground';
 import { Button } from '@/components/ui/button';
+import { ContactModal } from '@/components/ContactModal';
 import { Mail, Phone, Calendar, Award, Target, Users } from 'lucide-react';
 
 const About = () => {
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+
   return (
     <div className="relative min-h-screen">
       <ParticleBackground />
@@ -166,11 +170,20 @@ const About = () => {
                       Обсудим ваш проект и найдем лучшее AI-решение для вашего бизнеса
                     </p>
                     <div className="space-y-4">
-                      <Button className="w-full btn-hero" size="lg">
+                      <Button 
+                        className="w-full btn-hero" 
+                        size="lg"
+                        onClick={() => setIsContactModalOpen(true)}
+                      >
                         <Mail className="w-5 h-5 mr-2" />
                         Написать мне
                       </Button>
-                      <Button variant="outline" className="w-full" size="lg">
+                      <Button 
+                        variant="outline" 
+                        className="w-full" 
+                        size="lg"
+                        onClick={() => setIsContactModalOpen(true)}
+                      >
                         <Calendar className="w-5 h-5 mr-2" />
                         Запланировать встречу
                       </Button>
@@ -187,7 +200,7 @@ const About = () => {
           <div className="container mx-auto px-4">
             <AnimatedSection className="text-center mb-16">
               <h2 className="text-4xl font-bold mb-6">
-                <span className="gradient-text">Почему стоит работать именно с Kaigo</span>
+                <span className="gradient-text">Почему стоит работать именно с kAIgo</span>
               </h2>
             </AnimatedSection>
             
@@ -232,6 +245,10 @@ const About = () => {
         </section>
       </main>
       
+      <ContactModal 
+        isOpen={isContactModalOpen} 
+        onClose={() => setIsContactModalOpen(false)} 
+      />
       <Footer />
     </div>
   );

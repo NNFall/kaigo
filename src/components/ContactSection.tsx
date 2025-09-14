@@ -69,8 +69,8 @@ export const ContactSection = () => {
                   </div>
                   <div>
                     <div className="text-foreground font-semibold">Email</div>
-                    <a href="mailto:hello@kaigo.ai" className="text-muted-foreground group-hover:text-primary transition-colors">
-                      hello@kaigo.ai
+                    <a href="mailto:contact@kaigo.ai" className="text-muted-foreground group-hover:text-primary transition-colors">
+                      contact@kaigo.ai
                     </a>
                   </div>
                 </div>

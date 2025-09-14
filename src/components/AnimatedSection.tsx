@@ -6,7 +6,7 @@ interface AnimatedSectionProps {
   children: ReactNode;
   className?: string;
   delay?: number;
-  animation?: 'reveal-up' | 'scale-in' | 'fade-in';
+  animation?: 'reveal-up' | 'scale-in' | 'fade-in' | 'slide-left' | 'slide-right';
 }
 
 export const AnimatedSection = ({ 

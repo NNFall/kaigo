@@ -40,8 +40,12 @@ export const AboutSection = () => {
             <div className="relative w-full max-w-md mx-auto">
               {/* Photo Container */}
               <div className="glass rounded-2xl p-6">
-                <div className="aspect-square bg-gradient-primary rounded-xl flex items-center justify-center">
-                  <User className="w-24 h-24 text-white" />
+                <div className="aspect-square rounded-xl overflow-hidden">
+                  <img 
+                    src="/assets/profile-1.jpg" 
+                    alt="Профиль специалиста по AI-решениям"
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  />
                 </div>
               </div>
               

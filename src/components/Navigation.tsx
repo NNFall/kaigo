@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
+import { ContactModal } from '@/components/ContactModal';
 
 export const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -31,8 +33,10 @@ export const Navigation = () => {
           {/* Logo */}
           <div className="flex items-center">
             <Link to="/">
-              <span className="text-2xl font-bold text-gradient hover:opacity-80 transition-opacity">
-                Kaigo
+              <span className="text-2xl font-bold hover:opacity-80 transition-opacity">
+                <span className="text-foreground">k</span>
+                <span className="text-gradient">AI</span>
+                <span className="text-foreground">go</span>
               </span>
             </Link>
           </div>
@@ -80,8 +84,11 @@ export const Navigation = () => {
 
           {/* CTA Button */}
           <div className="hidden lg:block">
-            <Button asChild className="btn-hero px-6 py-2 rounded-lg hover:shadow-glow hover:-translate-y-0.5 transition-all duration-300">
-              <a href="#contact">Связаться со мной</a>
+            <Button 
+              className="btn-hero px-6 py-2 rounded-lg hover:shadow-glow hover:-translate-y-0.5 transition-all duration-300"
+              onClick={() => setIsContactModalOpen(true)}
+            >
+              Связаться со мной
             </Button>
           </div>
 
@@ -119,13 +126,24 @@ export const Navigation = () => {
               </div>
             ))}
             <div className="mt-4">
-              <Button asChild className="btn-hero w-full px-6 py-2 rounded-lg">
-                <a href="#contact">Связаться со мной</a>
+              <Button 
+                className="btn-hero w-full px-6 py-2 rounded-lg"
+                onClick={() => {
+                  setIsContactModalOpen(true);
+                  setIsMenuOpen(false);
+                }}
+              >
+                Связаться со мной
               </Button>
             </div>
           </div>
         )}
       </div>
+
+      <ContactModal 
+        isOpen={isContactModalOpen} 
+        onClose={() => setIsContactModalOpen(false)} 
+      />
     </nav>
   );
 };
