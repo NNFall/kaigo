@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Shield, LogOut } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { ContactModal } from '@/components/ContactModal';
+import { useAuth } from '@/hooks/useAuth';
 
 export const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const location = useLocation();
+  const { user, userRole, signOut } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -83,7 +85,39 @@ export const Navigation = () => {
           </nav>
 
           {/* CTA Button */}
-          <div className="hidden lg:block">
+          <div className="hidden lg:flex items-center gap-3">
+            {user ? (
+              <>
+                {userRole === 'admin' && (
+                  <Link to="/admin">
+                    <Button variant="outline" size="sm" className="gap-2">
+                      <Shield className="w-4 h-4" />
+                      Админ-панель
+                    </Button>
+                  </Link>
+                )}
+                <Link to="/auth">
+                  <Button variant="outline" size="sm">
+                    Вход
+                  </Button>
+                </Link>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={signOut}
+                  className="gap-2"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Выйти
+                </Button>
+              </>
+            ) : (
+              <Link to="/auth">
+                <Button variant="outline" size="sm">
+                  Вход
+                </Button>
+              </Link>
+            )}
             <Button 
               className="btn-hero px-6 py-2 rounded-lg hover:shadow-glow hover:-translate-y-0.5 transition-all duration-300"
               onClick={() => setIsContactModalOpen(true)}
@@ -125,7 +159,37 @@ export const Navigation = () => {
                 )}
               </div>
             ))}
-            <div className="mt-4">
+            <div className="mt-4 space-y-2">
+              {user ? (
+                <>
+                  {userRole === 'admin' && (
+                    <Link to="/admin" onClick={() => setIsMenuOpen(false)}>
+                      <Button variant="outline" size="sm" className="w-full gap-2">
+                        <Shield className="w-4 h-4" />
+                        Админ-панель
+                      </Button>
+                    </Link>
+                  )}
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => {
+                      signOut();
+                      setIsMenuOpen(false);
+                    }}
+                    className="w-full gap-2"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Выйти
+                  </Button>
+                </>
+              ) : (
+                <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
+                  <Button variant="outline" size="sm" className="w-full">
+                    Вход
+                  </Button>
+                </Link>
+              )}
               <Button 
                 className="btn-hero w-full px-6 py-2 rounded-lg"
                 onClick={() => {
