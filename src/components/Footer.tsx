@@ -114,13 +114,13 @@ export const Footer = () => {
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="w-5 h-5 text-primary" />
-                <span className="text-muted-foreground">info@digital-base.ru</span>
+                <span className="text-muted-foreground">novoseltsevnikitos@yandex.ru</span>
               </div>
               <div className="flex items-start space-x-3">
                 <MapPin className="w-5 h-5 text-primary mt-0.5" />
                 <span className="text-muted-foreground">
-                  г. Москва,<br />
-                  ул. Примерная, д. 123
+                  г. Самара,<br />
+                  ул. Магнитогорская
                 </span>
               </div>
             </div>
