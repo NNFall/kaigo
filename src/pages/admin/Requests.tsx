@@ -183,14 +183,14 @@ export default function Requests() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Заявки</h1>
-        <p className="text-muted-foreground">Управление заявками клиентов</p>
+        <h1 className="text-3xl font-bold admin-text">Заявки</h1>
+        <p className="admin-text-muted">Управление заявками клиентов</p>
       </div>
 
       {/* Filters */}
-      <Card>
+      <Card className="admin-card">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 admin-text">
             <Filter className="w-4 h-4" />
             Фильтры
           </CardTitle>
@@ -204,33 +204,33 @@ export default function Requests() {
                   placeholder="Поиск по имени, контакту или сообщению..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 bg-admin-card border-admin-border text-admin-text placeholder:text-admin-text-muted"
                 />
               </div>
             </div>
             
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-48">
+              <SelectTrigger className="w-48 bg-admin-card border-admin-border text-admin-text">
                 <SelectValue placeholder="Статус" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Все статусы</SelectItem>
-                <SelectItem value="new">Новые</SelectItem>
-                <SelectItem value="in_progress">В работе</SelectItem>
-                <SelectItem value="completed">Завершено</SelectItem>
+              <SelectContent className="bg-admin-card border-admin-border">
+                <SelectItem value="all" className="text-admin-text hover:bg-admin-sidebar">Все статусы</SelectItem>
+                <SelectItem value="new" className="text-admin-text hover:bg-admin-sidebar">Новые</SelectItem>
+                <SelectItem value="in_progress" className="text-admin-text hover:bg-admin-sidebar">В работе</SelectItem>
+                <SelectItem value="completed" className="text-admin-text hover:bg-admin-sidebar">Завершено</SelectItem>
               </SelectContent>
             </Select>
 
             <Select value={projectFilter} onValueChange={setProjectFilter}>
-              <SelectTrigger className="w-48">
+              <SelectTrigger className="w-48 bg-admin-card border-admin-border text-admin-text">
                 <SelectValue placeholder="Проект" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Все проекты</SelectItem>
-                <SelectItem value="ai-voice-assistant">AI Голосовой ассистент</SelectItem>
-                <SelectItem value="ai-chatbot">AI чат-бот</SelectItem>
-                <SelectItem value="vr-trainer">VR-тренажер</SelectItem>
-                <SelectItem value="other">Другой вопрос</SelectItem>
+              <SelectContent className="bg-admin-card border-admin-border">
+                <SelectItem value="all" className="text-admin-text hover:bg-admin-sidebar">Все проекты</SelectItem>
+                <SelectItem value="ai-voice-assistant" className="text-admin-text hover:bg-admin-sidebar">AI Голосовой ассистент</SelectItem>
+                <SelectItem value="ai-chatbot" className="text-admin-text hover:bg-admin-sidebar">AI чат-бот</SelectItem>
+                <SelectItem value="vr-trainer" className="text-admin-text hover:bg-admin-sidebar">VR-тренажер</SelectItem>
+                <SelectItem value="other" className="text-admin-text hover:bg-admin-sidebar">Другой вопрос</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -238,23 +238,23 @@ export default function Requests() {
       </Card>
 
       {/* Requests Table */}
-      <Card>
+      <Card className="admin-card">
         <CardHeader>
-          <CardTitle>
+          <CardTitle className="admin-text">
             Список заявок ({filteredContacts.length})
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="admin-text-muted">
             Все поступившие заявки от клиентов
           </CardDescription>
         </CardHeader>
         <CardContent>
           {filteredContacts.length === 0 ? (
             <div className="text-center py-8">
-              <Eye className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-medium mb-2">
+              <Eye className="w-12 h-12 mx-auto admin-text-muted mb-4" />
+              <h3 className="text-lg font-medium mb-2 admin-text">
                 {contacts.length === 0 ? 'Заявок пока нет' : 'Заявки не найдены'}
               </h3>
-              <p className="text-muted-foreground">
+              <p className="admin-text-muted">
                 {contacts.length === 0 
                   ? 'Новые заявки будут отображаться здесь'
                   : 'Попробуйте изменить фильтры поиска'
@@ -262,31 +262,31 @@ export default function Requests() {
               </p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <Table>
+            <div className="overflow-x-auto admin-table rounded-lg">
+              <Table className="w-full">
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Имя</TableHead>
-                    <TableHead>Контакт</TableHead>
-                    <TableHead>Проект</TableHead>
-                    <TableHead>Сообщение</TableHead>
-                    <TableHead>Статус</TableHead>
-                    <TableHead>Дата</TableHead>
-                    <TableHead className="text-right">Действия</TableHead>
+                    <TableHead className="admin-text font-semibold">Имя</TableHead>
+                    <TableHead className="admin-text font-semibold">Контакт</TableHead>
+                    <TableHead className="admin-text font-semibold">Проект</TableHead>
+                    <TableHead className="admin-text font-semibold">Сообщение</TableHead>
+                    <TableHead className="admin-text font-semibold">Статус</TableHead>
+                    <TableHead className="admin-text font-semibold">Дата</TableHead>
+                    <TableHead className="text-right admin-text font-semibold">Действия</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredContacts.map((contact) => (
-                    <TableRow key={contact.id}>
-                      <TableCell className="font-medium">{contact.name}</TableCell>
-                      <TableCell>{contact.contact}</TableCell>
-                      <TableCell>
+                    <TableRow key={contact.id} className="hover:bg-admin-sidebar/50">
+                      <TableCell className="font-medium admin-text">{contact.name}</TableCell>
+                      <TableCell className="admin-text">{contact.contact}</TableCell>
+                      <TableCell className="admin-text">
                         {contact.interested_project 
                           ? (projectMap[contact.interested_project as keyof typeof projectMap] || contact.interested_project)
                           : 'Не указан'
                         }
                       </TableCell>
-                      <TableCell className="max-w-xs truncate">
+                      <TableCell className="max-w-xs truncate admin-text">
                         {contact.message || 'Нет сообщения'}
                       </TableCell>
                       <TableCell>
@@ -294,19 +294,19 @@ export default function Requests() {
                           value={contact.status} 
                           onValueChange={(value) => updateStatus(contact.id, value)}
                         >
-                          <SelectTrigger className="w-32">
-                            <Badge variant={statusMap[contact.status as keyof typeof statusMap]?.variant || 'secondary'}>
+                          <SelectTrigger className="w-32 bg-admin-card border-admin-border">
+                            <Badge variant={statusMap[contact.status as keyof typeof statusMap]?.variant || 'secondary'} className="border-admin-border">
                               {statusMap[contact.status as keyof typeof statusMap]?.label || contact.status}
                             </Badge>
                           </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="new">Новая</SelectItem>
-                            <SelectItem value="in_progress">В работе</SelectItem>
-                            <SelectItem value="completed">Завершено</SelectItem>
+                          <SelectContent className="bg-admin-card border-admin-border">
+                            <SelectItem value="new" className="text-admin-text hover:bg-admin-sidebar">Новая</SelectItem>
+                            <SelectItem value="in_progress" className="text-admin-text hover:bg-admin-sidebar">В работе</SelectItem>
+                            <SelectItem value="completed" className="text-admin-text hover:bg-admin-sidebar">Завершено</SelectItem>
                           </SelectContent>
                         </Select>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="admin-text-muted">
                         {formatDistanceToNow(new Date(contact.created_at), {
                           addSuffix: true,
                           locale: ru,
@@ -317,7 +317,7 @@ export default function Requests() {
                           variant="outline"
                           size="sm"
                           onClick={() => deleteContact(contact.id)}
-                          className="text-destructive hover:text-destructive"
+                          className="text-destructive hover:text-destructive border-admin-border bg-admin-card"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
