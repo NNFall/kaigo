@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { AnimatedSection } from '@/components/AnimatedSection';
@@ -9,6 +9,11 @@ import { Mail, Phone, Calendar, Award, Target, Users } from 'lucide-react';
 
 const About = () => {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <div className="relative min-h-screen">
@@ -30,12 +35,12 @@ const About = () => {
           </div>
         </section>
 
-        {/* Main Content */}
+        {/* Personal Info Section */}
         <section className="py-16">
           <div className="container mx-auto px-4">
-            <div className="grid lg:grid-cols-2 gap-16 items-start">
+            <div className="grid lg:grid-cols-2 gap-16 items-center">
               
-              {/* Left Column - Main Info */}
+              {/* Left Column - Text Content */}
               <div className="space-y-8">
                 <AnimatedSection delay={200}>
                   <div className="glass p-8 rounded-2xl">
@@ -44,7 +49,7 @@ const About = () => {
                     </h2>
                     <div className="space-y-4 text-lg leading-relaxed">
                       <p>
-                        Привет! Меня зовут [Ваше имя], и я специализируюсь на создании и внедрении 
+                        Привет! Меня зовут Владимир, и я специализируюсь на создании и внедрении 
                         AI-решений для бизнеса. Моя страсть — превращать сложные технологии 
                         искусственного интеллекта в понятные и эффективные инструменты.
                       </p>
@@ -60,8 +65,45 @@ const About = () => {
                     </div>
                   </div>
                 </AnimatedSection>
+              </div>
 
-                <AnimatedSection delay={400}>
+              {/* Right Column - Photo */}
+              <div className="space-y-8">
+                <AnimatedSection delay={300}>
+                  <div className="relative w-full max-w-md mx-auto lg:max-w-full">
+                    <div className="glass p-6 rounded-2xl">
+                      <div className="aspect-[3/4] rounded-xl overflow-hidden">
+                        <img 
+                          src="/assets/profile-2.jpg" 
+                          alt="Владимир - специалист по AI-решениям"
+                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                    </div>
+                    
+                    {/* Decorative Elements */}
+                    <div className="absolute -top-4 -right-4 w-20 h-20 glass rounded-full flex items-center justify-center animate-float">
+                      <div className="w-8 h-8 bg-accent rounded-full animate-pulse"></div>
+                    </div>
+                    
+                    <div className="absolute -bottom-4 -left-4 w-16 h-16 glass rounded-lg flex items-center justify-center rotate-12">
+                      <div className="w-6 h-6 bg-gradient-secondary rounded-sm"></div>
+                    </div>
+                  </div>
+                </AnimatedSection>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Experience and Skills Section */}
+        <section className="py-16">
+          <div className="container mx-auto px-4">
+            <div className="grid lg:grid-cols-2 gap-16 items-start">
+              
+              {/* Left Column - Approach */}
+              <div className="space-y-8">
+                <AnimatedSection delay={200}>
                   <div className="glass p-8 rounded-2xl">
                     <h2 className="text-3xl font-bold mb-6 text-gradient">
                       Мой подход к работе

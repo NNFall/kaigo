@@ -23,7 +23,7 @@ export const Navigation = () => {
     { title: 'Главная', href: '/' },
     { title: 'О нас', href: '/about' },
     { title: 'Проекты', href: '/projects' },
-    { title: 'Контакты', href: '#contact' },
+    { title: 'Контакты', href: '/#contact' },
   ];
 
   return (
