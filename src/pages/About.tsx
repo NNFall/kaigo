@@ -6,7 +6,6 @@ import { ParticleBackground } from '@/components/ParticleBackground';
 import { Button } from '@/components/ui/button';
 import { ContactModal } from '@/components/ContactModal';
 import { Mail, Phone, Calendar, Award, Target, Users } from 'lucide-react';
-
 const About = () => {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
 
@@ -14,9 +13,7 @@ const About = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
-  return (
-    <div className="relative min-h-screen">
+  return <div className="relative min-h-screen">
       <ParticleBackground />
       <Navigation />
       
@@ -48,11 +45,7 @@ const About = () => {
                       Кто я и чем занимаюсь
                     </h2>
                     <div className="space-y-4 text-lg leading-relaxed">
-                      <p>
-                        Привет! Меня зовут Владимир, и я специализируюсь на создании и внедрении 
-                        AI-решений для бизнеса. Моя страсть — превращать сложные технологии 
-                        искусственного интеллекта в понятные и эффективные инструменты.
-                      </p>
+                      <p>Привет! Меня зовут Никита, и я специализируюсь на создании и внедрении AI-решений для бизнеса. Моя страсть — превращать сложные технологии искусственного интеллекта в понятные и эффективные инструменты.</p>
                       <p>
                         За последние годы я помог десяткам компаний автоматизировать процессы 
                         с помощью голосовых ассистентов, чат-ботов и других AI-технологий. 
@@ -73,11 +66,7 @@ const About = () => {
                   <div className="relative w-full max-w-md mx-auto lg:max-w-full">
                     <div className="glass p-6 rounded-2xl">
                       <div className="aspect-[3/4] rounded-xl overflow-hidden">
-                        <img 
-                          src="/assets/profile-2.jpg" 
-                          alt="Владимир - специалист по AI-решениям"
-                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                        />
+                        <img src="/assets/profile-2.jpg" alt="Владимир - специалист по AI-решениям" className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
                       </div>
                     </div>
                     
@@ -212,20 +201,11 @@ const About = () => {
                       Обсудим ваш проект и найдем лучшее AI-решение для вашего бизнеса
                     </p>
                     <div className="space-y-4">
-                      <Button 
-                        className="w-full btn-hero" 
-                        size="lg"
-                        onClick={() => setIsContactModalOpen(true)}
-                      >
+                      <Button className="w-full btn-hero" size="lg" onClick={() => setIsContactModalOpen(true)}>
                         <Mail className="w-5 h-5 mr-2" />
                         Написать мне
                       </Button>
-                      <Button 
-                        variant="outline" 
-                        className="w-full" 
-                        size="lg"
-                        onClick={() => setIsContactModalOpen(true)}
-                      >
+                      <Button variant="outline" className="w-full" size="lg" onClick={() => setIsContactModalOpen(true)}>
                         <Calendar className="w-5 h-5 mr-2" />
                         Запланировать встречу
                       </Button>
@@ -287,13 +267,8 @@ const About = () => {
         </section>
       </main>
       
-      <ContactModal 
-        isOpen={isContactModalOpen} 
-        onClose={() => setIsContactModalOpen(false)} 
-      />
+      <ContactModal isOpen={isContactModalOpen} onClose={() => setIsContactModalOpen(false)} />
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default About;
