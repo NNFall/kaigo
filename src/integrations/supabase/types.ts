@@ -19,24 +19,30 @@ export type Database = {
           contact: string
           created_at: string
           id: string
+          interested_project: string | null
           message: string | null
           name: string
+          status: string | null
           updated_at: string
         }
         Insert: {
           contact: string
           created_at?: string
           id?: string
+          interested_project?: string | null
           message?: string | null
           name: string
+          status?: string | null
           updated_at?: string
         }
         Update: {
           contact?: string
           created_at?: string
           id?: string
+          interested_project?: string | null
           message?: string | null
           name?: string
+          status?: string | null
           updated_at?: string
         }
         Relationships: []

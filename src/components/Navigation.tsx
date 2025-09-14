@@ -21,11 +21,26 @@ export const Navigation = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleContactClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    if (location.pathname !== '/') {
+      // If not on home page, navigate to home first, then scroll
+      window.location.href = '/#contact';
+    } else {
+      // If on home page, scroll to contact section
+      const contactSection = document.getElementById('contact');
+      if (contactSection) {
+        contactSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
+
   const menuItems = [
     { title: 'Главная', href: '/' },
     { title: 'О нас', href: '/about' },
     { title: 'Проекты', href: '/projects' },
-    { title: 'Контакты', href: '/#contact' },
+    { title: 'Контакты', href: '#contact', onClick: handleContactClick },
   ];
 
   return (
@@ -55,6 +70,7 @@ export const Navigation = () => {
                   <a
                     key={item.title}
                     href={item.href}
+                    onClick={item.onClick}
                     className={`transition-colors relative group px-3 py-2 ${
                       isActive ? 'text-primary' : 'text-foreground hover:text-primary'
                     }`}
@@ -96,7 +112,7 @@ export const Navigation = () => {
                     </Button>
                   </Link>
                 )}
-                <Link to="/auth">
+                <Link to="/login">
                   <Button variant="outline" size="sm">
                     Вход
                   </Button>
@@ -112,11 +128,11 @@ export const Navigation = () => {
                 </Button>
               </>
             ) : (
-              <Link to="/auth">
-                <Button variant="outline" size="sm">
-                  Вход
-                </Button>
-              </Link>
+                <Link to="/login">
+                  <Button variant="outline" size="sm">
+                    Вход
+                  </Button>
+                </Link>
             )}
             <Button 
               className="btn-hero px-6 py-2 rounded-lg hover:shadow-glow hover:-translate-y-0.5 transition-all duration-300"
@@ -138,27 +154,32 @@ export const Navigation = () => {
         {/* Mobile Menu */}
         {isMenuOpen && (
           <div className="lg:hidden mt-4 glass rounded-lg p-4 animate-scale-in">
-            {menuItems.map((item) => (
-              <div key={item.title} className="py-2">
-                {item.href.startsWith('#') ? (
-                  <a 
-                    href={item.href}
-                    className="text-foreground hover:text-primary transition-colors block"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {item.title}
-                  </a>
-                ) : (
-                  <Link 
-                    to={item.href}
-                    className="text-foreground hover:text-primary transition-colors block"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {item.title}
-                  </Link>
-                )}
-              </div>
-            ))}
+              {menuItems.map((item) => (
+                <div key={item.title} className="py-2">
+                  {item.href.startsWith('#') ? (
+                    <a 
+                      href={item.href}
+                      className="text-foreground hover:text-primary transition-colors block"
+                      onClick={(e) => {
+                        if (item.onClick) {
+                          item.onClick(e);
+                        }
+                        setIsMenuOpen(false);
+                      }}
+                    >
+                      {item.title}
+                    </a>
+                  ) : (
+                    <Link 
+                      to={item.href}
+                      className="text-foreground hover:text-primary transition-colors block"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      {item.title}
+                    </Link>
+                  )}
+                </div>
+              ))}
             <div className="mt-4 space-y-2">
               {user ? (
                 <>
@@ -184,7 +205,7 @@ export const Navigation = () => {
                   </Button>
                 </>
               ) : (
-                <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
+                <Link to="/login" onClick={() => setIsMenuOpen(false)}>
                   <Button variant="outline" size="sm" className="w-full">
                     Вход
                   </Button>

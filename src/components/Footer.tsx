@@ -1,4 +1,5 @@
 import { Phone, Mail, MapPin } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -74,6 +75,9 @@ export const Footer = () => {
               <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
                 Согласие на обработку данных
               </a>
+              <Link to="/login" className="text-muted-foreground hover:text-primary transition-colors text-xs opacity-70">
+                Вход для администратора
+              </Link>
             </div>
           </div>
         </div>
