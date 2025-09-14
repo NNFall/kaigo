@@ -213,7 +213,8 @@ export default function Auth() {
           title: "Пароль обновлен",
           description: "Ваш пароль был успешно изменен. Теперь вы можете войти в систему.",
         });
-        navigate('/login');
+        setIsPasswordReset(false);
+        navigate('/auth');
       }
     } catch (error: any) {
       toast({

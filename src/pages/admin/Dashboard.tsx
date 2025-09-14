@@ -19,7 +19,7 @@ interface ChartData {
   requests: number;
 }
 
-const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300'];
+const COLORS = ['hsl(220, 70%, 50%)', 'hsl(140, 50%, 45%)', 'hsl(35, 85%, 55%)', 'hsl(270, 60%, 50%)', 'hsl(200, 80%, 50%)', 'hsl(320, 65%, 55%)'];
 
 export default function Dashboard() {
   const { userRole } = useAuth();

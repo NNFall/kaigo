@@ -183,14 +183,14 @@ export default function Requests() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold admin-text">Заявки</h1>
-        <p className="admin-text-muted">Управление заявками клиентов</p>
+        <h1 className="text-3xl font-bold text-admin-text">Заявки</h1>
+        <p className="text-admin-text-muted">Управление заявками клиентов</p>
       </div>
 
       {/* Filters */}
       <Card className="admin-card">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 admin-text">
+          <CardTitle className="flex items-center gap-2 text-admin-text">
             <Filter className="w-4 h-4" />
             Фильтры
           </CardTitle>
@@ -240,21 +240,21 @@ export default function Requests() {
       {/* Requests Table */}
       <Card className="admin-card">
         <CardHeader>
-          <CardTitle className="admin-text">
+          <CardTitle className="text-admin-text">
             Список заявок ({filteredContacts.length})
           </CardTitle>
-          <CardDescription className="admin-text-muted">
+          <CardDescription className="text-admin-text-muted">
             Все поступившие заявки от клиентов
           </CardDescription>
         </CardHeader>
         <CardContent>
           {filteredContacts.length === 0 ? (
             <div className="text-center py-8">
-              <Eye className="w-12 h-12 mx-auto admin-text-muted mb-4" />
-              <h3 className="text-lg font-medium mb-2 admin-text">
+              <Eye className="w-12 h-12 mx-auto text-admin-text-muted mb-4" />
+              <h3 className="text-lg font-medium mb-2 text-admin-text">
                 {contacts.length === 0 ? 'Заявок пока нет' : 'Заявки не найдены'}
               </h3>
-              <p className="admin-text-muted">
+              <p className="text-admin-text-muted">
                 {contacts.length === 0 
                   ? 'Новые заявки будут отображаться здесь'
                   : 'Попробуйте изменить фильтры поиска'
@@ -266,27 +266,27 @@ export default function Requests() {
               <Table className="w-full">
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="admin-text font-semibold">Имя</TableHead>
-                    <TableHead className="admin-text font-semibold">Контакт</TableHead>
-                    <TableHead className="admin-text font-semibold">Проект</TableHead>
-                    <TableHead className="admin-text font-semibold">Сообщение</TableHead>
-                    <TableHead className="admin-text font-semibold">Статус</TableHead>
-                    <TableHead className="admin-text font-semibold">Дата</TableHead>
-                    <TableHead className="text-right admin-text font-semibold">Действия</TableHead>
+                    <TableHead className="text-admin-text font-semibold">Имя</TableHead>
+                    <TableHead className="text-admin-text font-semibold">Контакт</TableHead>
+                    <TableHead className="text-admin-text font-semibold">Проект</TableHead>
+                    <TableHead className="text-admin-text font-semibold">Сообщение</TableHead>
+                    <TableHead className="text-admin-text font-semibold">Статус</TableHead>
+                    <TableHead className="text-admin-text font-semibold">Дата</TableHead>
+                    <TableHead className="text-right text-admin-text font-semibold">Действия</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredContacts.map((contact) => (
                     <TableRow key={contact.id} className="hover:bg-admin-sidebar/50">
-                      <TableCell className="font-medium admin-text">{contact.name}</TableCell>
-                      <TableCell className="admin-text">{contact.contact}</TableCell>
-                      <TableCell className="admin-text">
+                      <TableCell className="font-medium text-admin-text">{contact.name}</TableCell>
+                      <TableCell className="text-admin-text">{contact.contact}</TableCell>
+                      <TableCell className="text-admin-text">
                         {contact.interested_project 
                           ? (projectMap[contact.interested_project as keyof typeof projectMap] || contact.interested_project)
                           : 'Не указан'
                         }
                       </TableCell>
-                      <TableCell className="max-w-xs truncate admin-text">
+                      <TableCell className="max-w-xs truncate text-admin-text">
                         {contact.message || 'Нет сообщения'}
                       </TableCell>
                       <TableCell>
@@ -306,7 +306,7 @@ export default function Requests() {
                           </SelectContent>
                         </Select>
                       </TableCell>
-                      <TableCell className="admin-text-muted">
+                      <TableCell className="text-admin-text-muted">
                         {formatDistanceToNow(new Date(contact.created_at), {
                           addSuffix: true,
                           locale: ru,
