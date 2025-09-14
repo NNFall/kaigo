@@ -29,13 +29,6 @@ const AISettings = () => {
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
 
-  const availableModels = [
-    { value: 'openai/gpt-4o-mini', label: 'GPT-4o Mini (Быстрая)' },
-    { value: 'openai/gpt-4o', label: 'GPT-4o (Мощная)' },
-    { value: 'anthropic/claude-3-haiku', label: 'Claude 3 Haiku (Быстрая)' },
-    { value: 'anthropic/claude-3-sonnet', label: 'Claude 3 Sonnet (Сбалансированная)' },
-    { value: 'anthropic/claude-3-opus', label: 'Claude 3 Opus (Самая мощная)' },
-  ];
 
   useEffect(() => {
     if (userRole === 'admin') {
@@ -204,21 +197,15 @@ const AISettings = () => {
 
             <div className="space-y-2">
               <Label htmlFor="model">Модель</Label>
-              <Select
+              <Input
+                id="model"
                 value={settings?.model || ''}
-                onValueChange={(value) => setSettings(prev => prev ? { ...prev, model: value } : null)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Выберите модель" />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableModels.map((model) => (
-                    <SelectItem key={model.value} value={model.value}>
-                      {model.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                onChange={(e) => setSettings(prev => prev ? { ...prev, model: e.target.value } : null)}
+                placeholder="openai/gpt-4o-mini"
+              />
+              <p className="text-sm text-muted-foreground">
+                Введите название модели (например: openai/gpt-4o-mini, anthropic/claude-3-sonnet, openai/whisper-1)
+              </p>
             </div>
           </CardContent>
         </Card>
