@@ -15,8 +15,8 @@ import AdminLayout from "./components/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
 import Requests from "./pages/admin/Requests";
 import Dialogues from "./pages/admin/Dialogues";
-import AISettings from "./pages/admin/AISettings";
 import Management from "./pages/admin/Management";
+import AISettings from "./pages/admin/AISettings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
