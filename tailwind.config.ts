@@ -66,6 +66,7 @@ export default {
         "admin-text-muted": "hsl(var(--admin-text-muted))",
         "admin-border": "hsl(var(--admin-border))",
         "admin-hover": "hsl(var(--admin-hover))",
+        "admin-card": "hsl(var(--admin-card))",
       },
       backgroundImage: {
         "gradient-primary": "var(--gradient-primary)",

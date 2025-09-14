@@ -150,61 +150,61 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="admin-container space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Дашборд</h1>
-        <p className="text-muted-foreground">Обзор ключевых метрик и статистики</p>
+        <h1 className="text-3xl font-bold text-admin-text">Дашборд</h1>
+        <p className="text-admin-text-muted">Обзор ключевых метрик и статистики</p>
       </div>
 
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
+        <Card className="admin-card">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Всего заявок</CardTitle>
-            <MessageSquare className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-admin-text">Всего заявок</CardTitle>
+            <MessageSquare className="h-4 w-4 text-admin-accent" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalRequests}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold text-admin-text">{stats.totalRequests}</div>
+            <p className="text-xs text-admin-text-muted">
               За всё время
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="admin-card">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">За сегодня</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-admin-text">За сегодня</CardTitle>
+            <Calendar className="h-4 w-4 text-admin-accent" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.todayRequests}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold text-admin-text">{stats.todayRequests}</div>
+            <p className="text-xs text-admin-text-muted">
               Новые заявки сегодня
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="admin-card">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">За неделю</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-admin-text">За неделю</CardTitle>
+            <TrendingUp className="h-4 w-4 text-admin-accent" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.weekRequests}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold text-admin-text">{stats.weekRequests}</div>
+            <p className="text-xs text-admin-text-muted">
               Последние 7 дней
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="admin-card">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">В работе</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-admin-text">В работе</CardTitle>
+            <Clock className="h-4 w-4 text-admin-accent" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.pendingRequests}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold text-admin-text">{stats.pendingRequests}</div>
+            <p className="text-xs text-admin-text-muted">
               Требуют внимания
             </p>
           </CardContent>
@@ -213,30 +213,37 @@ export default function Dashboard() {
 
       {/* Charts */}
       <div className="grid gap-4 md:grid-cols-2">
-        <Card>
+        <Card className="admin-card">
           <CardHeader>
-            <CardTitle>Заявки по дням</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-admin-text">Заявки по дням</CardTitle>
+            <CardDescription className="text-admin-text-muted">
               Количество заявок за последние 7 дней
             </CardDescription>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={weeklyData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="requests" fill="hsl(var(--primary))" />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--admin-border))" />
+                <XAxis dataKey="name" stroke="hsl(var(--admin-text-muted))" />
+                <YAxis stroke="hsl(var(--admin-text-muted))" />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'hsl(var(--admin-sidebar))', 
+                    border: '1px solid hsl(var(--admin-border))',
+                    borderRadius: '8px',
+                    color: 'hsl(var(--admin-text))'
+                  }} 
+                />
+                <Bar dataKey="requests" fill="hsl(var(--admin-accent))" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="admin-card">
           <CardHeader>
-            <CardTitle>Интерес к проектам</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-admin-text">Интерес к проектам</CardTitle>
+            <CardDescription className="text-admin-text-muted">
               Распределение заявок по проектам
             </CardDescription>
           </CardHeader>
@@ -257,7 +264,14 @@ export default function Dashboard() {
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'hsl(var(--admin-sidebar))', 
+                    border: '1px solid hsl(var(--admin-border))',
+                    borderRadius: '8px',
+                    color: 'hsl(var(--admin-text))'
+                  }} 
+                />
               </PieChart>
             </ResponsiveContainer>
           </CardContent>
@@ -265,22 +279,22 @@ export default function Dashboard() {
       </div>
 
       {/* Status Overview */}
-      <Card>
+      <Card className="admin-card">
         <CardHeader>
-          <CardTitle>Статистика обработки</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-admin-text">Статистика обработки</CardTitle>
+          <CardDescription className="text-admin-text-muted">
             Текущий статус всех заявок
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-4">
             <div className="flex items-center gap-2">
-              <Badge variant="secondary">{stats.pendingRequests}</Badge>
-              <span className="text-sm text-muted-foreground">Ожидают обработки</span>
+              <Badge variant="secondary" className="bg-admin-accent/20 text-admin-accent border-admin-accent/30">{stats.pendingRequests}</Badge>
+              <span className="text-sm text-admin-text-muted">Ожидают обработки</span>
             </div>
             <div className="flex items-center gap-2">
-              <Badge variant="default">{stats.completedRequests}</Badge>
-              <span className="text-sm text-muted-foreground">Завершено</span>
+              <Badge variant="default" className="bg-admin-accent text-white">{stats.completedRequests}</Badge>
+              <span className="text-sm text-admin-text-muted">Завершено</span>
             </div>
           </div>
         </CardContent>

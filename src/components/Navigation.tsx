@@ -102,14 +102,6 @@ export const Navigation = () => {
 
           {/* CTA Button */}
           <div className="hidden lg:flex items-center gap-3">
-            {user && userRole === 'admin' && (
-              <Link to="/admin">
-                <Button variant="outline" size="sm" className="gap-2">
-                  <Shield className="w-4 h-4" />
-                  Админ-панель
-                </Button>
-              </Link>
-            )}
             <Button 
               className="btn-hero px-6 py-2 rounded-lg hover:shadow-glow hover:-translate-y-0.5 transition-all duration-300"
               onClick={() => setIsContactModalOpen(true)}
@@ -157,14 +149,6 @@ export const Navigation = () => {
                 </div>
               ))}
             <div className="mt-4 space-y-2">
-              {user && userRole === 'admin' && (
-                <Link to="/admin" onClick={() => setIsMenuOpen(false)}>
-                  <Button variant="outline" size="sm" className="w-full gap-2">
-                    <Shield className="w-4 h-4" />
-                    Админ-панель
-                  </Button>
-                </Link>
-              )}
               <Button 
                 className="btn-hero w-full px-6 py-2 rounded-lg"
                 onClick={() => {

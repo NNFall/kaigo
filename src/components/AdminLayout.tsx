@@ -20,7 +20,8 @@ import {
   Settings, 
   LogOut,
   Shield,
-  Menu
+  Menu,
+  Home
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -99,6 +100,18 @@ function AdminSidebar() {
         <SidebarGroup className="mt-auto">
           <SidebarGroupContent>
             <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Button
+                    variant="ghost"
+                    onClick={() => window.location.href = '/'}
+                    className="w-full justify-start text-admin-text hover:bg-admin-hover"
+                  >
+                    <Home className="w-4 h-4" />
+                    <span>На сайт</span>
+                  </Button>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
                   <Button
