@@ -14,6 +14,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user, userRole } = useAuth();
@@ -63,6 +64,46 @@ export default function Login() {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handlePasswordReset = async () => {
+    if (!email) {
+      toast({
+        title: "Введите email",
+        description: "Пожалуйста, введите ваш email для сброса пароля",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsResettingPassword(true);
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth`,
+      });
+
+      if (error) {
+        toast({
+          title: "Ошибка",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Письмо отправлено",
+          description: "Проверьте почту для сброса пароля",
+        });
+      }
+    } catch (error: any) {
+      toast({
+        title: "Ошибка",
+        description: "Произошла ошибка при сбросе пароля",
+        variant: "destructive",
+      });
+    } finally {
+      setIsResettingPassword(false);
     }
   };
 
@@ -139,6 +180,17 @@ export default function Login() {
               )}
             </Button>
           </form>
+
+          <div className="mt-4 text-center">
+            <Button 
+              variant="link" 
+              onClick={handlePasswordReset}
+              disabled={isResettingPassword}
+              className="text-muted-foreground text-sm"
+            >
+              {isResettingPassword ? "Отправляем..." : "Забыли пароль?"}
+            </Button>
+          </div>
 
           <div className="mt-6 text-center">
             <Button 
