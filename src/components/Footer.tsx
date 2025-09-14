@@ -1,4 +1,4 @@
-import { Phone, Mail, MapPin, Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
+import { Phone, Mail, MapPin } from 'lucide-react';
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -6,102 +6,32 @@ export const Footer = () => {
   return (
     <footer className="bg-hero-bg border-t border-border/50 py-16">
       <div className="container mx-auto px-4">
-        <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-8 mb-12">
+        <div className="grid lg:grid-cols-2 gap-8 mb-12">
           {/* Company Info */}
           <div className="space-y-6">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">Ц</span>
+                <span className="text-white font-bold text-lg">Н</span>
               </div>
               <div className="text-foreground font-bold text-lg">
-                ЦИФРОВАЯ<br />
-                <span className="text-primary">ОПОРА</span>
+                НОВОСЕЛЬЦЕВ<br />
+                <span className="text-primary">НИКИТА</span>
               </div>
             </div>
             
             <p className="text-muted-foreground leading-relaxed">
-              Мы создаем цифровые решения, которые помогают бизнесу расти и развиваться в современном мире технологий.
+              Создаю цифровые решения для бизнеса
             </p>
 
             {/* Social Links */}
             <div className="flex space-x-4">
-              <a href="#" className="w-10 h-10 glass rounded-lg flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
-                <Facebook className="w-5 h-5" />
+              <a href="https://t.me/kiperovka" className="w-10 h-10 glass rounded-lg flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
+                <Phone className="w-5 h-5" />
               </a>
-              <a href="#" className="w-10 h-10 glass rounded-lg flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
-                <Instagram className="w-5 h-5" />
-              </a>
-              <a href="#" className="w-10 h-10 glass rounded-lg flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
-                <Linkedin className="w-5 h-5" />
-              </a>
-              <a href="#" className="w-10 h-10 glass rounded-lg flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
-                <Twitter className="w-5 h-5" />
+              <a href="mailto:novoseltsevnikitos@yandex.ru" className="w-10 h-10 glass rounded-lg flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
+                <Mail className="w-5 h-5" />
               </a>
             </div>
-          </div>
-
-          {/* Services */}
-          <div>
-            <h3 className="text-lg font-semibold text-foreground mb-6">Услуги</h3>
-            <ul className="space-y-3">
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                  Анализ и аудит
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                  Автоматизация
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                  Веб-разработка
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                  Мобильные приложения
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                  Управление данными
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Company */}
-          <div>
-            <h3 className="text-lg font-semibold text-foreground mb-6">Компания</h3>
-            <ul className="space-y-3">
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                  О нас
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                  Команда
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                  Карьера
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                  Новости
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                  Блог
-                </a>
-              </li>
-            </ul>
           </div>
 
           {/* Contact */}
@@ -131,7 +61,7 @@ export const Footer = () => {
         <div className="border-t border-border/50 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="text-muted-foreground text-sm">
-              © {currentYear} Цифровая Опора. Все права защищены.
+              © {currentYear} Новосельцев Никита. Все права защищены.
             </div>
             
             <div className="flex space-x-6 text-sm">
