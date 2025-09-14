@@ -48,7 +48,7 @@ const handler = async (req: Request): Promise<Response> => {
     // Send email notification
     const emailResponse = await resend.emails.send({
       from: "Portfolio Contact <onboarding@resend.dev>",
-      to: ["novoseltsevnikitos@yandex.ru"],
+      to: ["nikitanovyj1@gmail.com"],
       subject: `Новая заявка от ${name}`,
       html: `
         <h2>Новая заявка с сайта-портфолио</h2>
