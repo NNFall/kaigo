@@ -195,7 +195,7 @@ const AIWidget: React.FC<AIWidgetProps> = ({ isEnabled = true }) => {
         <div className="fixed bottom-6 right-6 z-50">
           <Button
             onClick={handleOpenChat}
-            className="h-18 w-18 rounded-full bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300 ai-widget-pulse ai-widget-glow"
+            className="h-24 w-24 rounded-full bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300 ai-widget-pulse ai-widget-glow"
             size="icon"
           >
             <MessageCircle className="h-8 w-8 text-primary-foreground" />
