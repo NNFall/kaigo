@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Outlet, useLocation, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Outlet, useLocation, Link, useNavigate } from 'react-router-dom';
 import {
   Sidebar,
   SidebarContent,
@@ -138,6 +138,30 @@ function AdminSidebar() {
 }
 
 export default function AdminLayout() {
+  const { user, isLoading } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isLoading && !user) {
+      navigate('/auth');
+    }
+  }, [user, isLoading, navigate]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+          <p className="mt-4 text-muted-foreground">Загрузка...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null; // Will redirect via useEffect
+  }
+
   return (
     <SidebarProvider>
       <div className="admin-layout min-h-screen flex w-full">

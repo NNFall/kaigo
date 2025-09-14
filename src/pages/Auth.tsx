@@ -53,28 +53,37 @@ export default function Auth() {
 
     const isResetToken = checkForPasswordReset();
 
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Auth state change:', event, { hasSession: !!session, isPasswordReset, isResetToken });
+      
+      if (event === 'PASSWORD_RECOVERY') {
+        console.log('PASSWORD_RECOVERY event detected');
+        setIsPasswordReset(true);
+        return; // Don't navigate during password recovery
+      }
+      
+      // Only navigate if it's a real login (not password reset) and user is authenticated
+      if (session && event === 'SIGNED_IN' && !isPasswordReset && !isResetToken) {
+        console.log('Navigating to home after successful login');
+        navigate('/');
+      }
+    });
+
     // Check if user is already logged in ONLY if it's not a password reset
-    if (!isResetToken) {
+    if (!isResetToken && !isPasswordReset) {
       const checkUser = async () => {
         const { data: { session } } = await supabase.auth.getSession();
         if (session) {
+          console.log('User already logged in, redirecting to home');
           navigate('/');
         }
       };
       checkUser();
     }
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'PASSWORD_RECOVERY') {
-        setIsPasswordReset(true);
-      } else if (session && !isPasswordReset && !isResetToken) {
-        navigate('/');
-      }
-    });
-
     return () => subscription.unsubscribe();
-  }, [navigate, location.hash, location.search]);
+  }, [navigate, location.hash, location.search, isPasswordReset]);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
