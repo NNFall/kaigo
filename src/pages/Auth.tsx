@@ -34,7 +34,7 @@ export default function Auth() {
       if (token && type === 'recovery') {
         console.log('Password reset token found in query params');
         setIsPasswordReset(true);
-        return;
+        return true;
       }
       
       // Fallback: check hash parameters
@@ -45,14 +45,16 @@ export default function Auth() {
       if (accessToken && hashType === 'recovery') {
         console.log('Password reset token found in hash params');
         setIsPasswordReset(true);
-        return;
+        return true;
       }
+      
+      return false;
     };
 
-    checkForPasswordReset();
+    const isResetToken = checkForPasswordReset();
 
-    // Check if user is already logged in (but not during password reset)
-    if (!isPasswordReset) {
+    // Check if user is already logged in ONLY if it's not a password reset
+    if (!isResetToken) {
       const checkUser = async () => {
         const { data: { session } } = await supabase.auth.getSession();
         if (session) {
@@ -66,13 +68,13 @@ export default function Auth() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'PASSWORD_RECOVERY') {
         setIsPasswordReset(true);
-      } else if (session && !isPasswordReset) {
+      } else if (session && !isPasswordReset && !isResetToken) {
         navigate('/');
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate, location.hash, location.search, isPasswordReset]);
+  }, [navigate, location.hash, location.search]);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
