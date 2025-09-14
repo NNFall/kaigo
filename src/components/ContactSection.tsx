@@ -69,8 +69,8 @@ export const ContactSection = () => {
                   </div>
                   <div>
                     <div className="text-foreground font-semibold">Email</div>
-                    <a href="mailto:contact@kaigo.ai" className="text-muted-foreground group-hover:text-primary transition-colors">
-                      contact@kaigo.ai
+                    <a href="mailto:novoseltsevnikitos@yandex.ru" className="text-muted-foreground group-hover:text-primary transition-colors">
+                      novoseltsevnikitos@yandex.ru
                     </a>
                   </div>
                 </div>
@@ -81,8 +81,8 @@ export const ContactSection = () => {
                   </div>
                   <div>
                     <div className="text-foreground font-semibold">Telegram</div>
-                    <a href="https://t.me/kaigo_ai" target="_blank" rel="noopener noreferrer" className="text-muted-foreground group-hover:text-primary transition-colors">
-                      @kaigo_ai
+                    <a href="https://t.me/kiperovka" target="_blank" rel="noopener noreferrer" className="text-muted-foreground group-hover:text-primary transition-colors">
+                      @kiperovka
                     </a>
                   </div>
                 </div>
@@ -93,7 +93,7 @@ export const ContactSection = () => {
                   </div>
                   <div>
                     <div className="text-foreground font-semibold">Локация</div>
-                    <div className="text-muted-foreground group-hover:text-primary transition-colors">Россия</div>
+                    <div className="text-muted-foreground group-hover:text-primary transition-colors">г. Самара, ул. Магнитогорская</div>
                   </div>
                 </div>
               </div>
@@ -111,11 +111,11 @@ export const ContactSection = () => {
                   </div>
                   <span>GitHub</span>
                 </a>
-                <a href="https://t.me/kaigo_ai" target="_blank" rel="noopener noreferrer" className="flex items-center space-x-3 text-muted-foreground hover:text-primary transition-all duration-300 group">
+                <a href="https://t.me/AIPostNN" target="_blank" rel="noopener noreferrer" className="flex items-center space-x-3 text-muted-foreground hover:text-primary transition-all duration-300 group">
                   <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center group-hover:bg-primary/20 group-hover:scale-110 transition-all">
                     <MessageCircle className="w-4 h-4 text-primary" />
                   </div>
-                  <span>Telegram</span>
+                  <span>Telegram канал новостей</span>
                 </a>
                 <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="flex items-center space-x-3 text-muted-foreground hover:text-primary transition-all duration-300 group">
                   <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center group-hover:bg-primary/20 group-hover:scale-110 transition-all">

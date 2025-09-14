@@ -5,6 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Send, CheckCircle } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 interface ContactModalProps {
   isOpen: boolean;
@@ -19,6 +21,7 @@ export const ContactModal = ({ isOpen, onClose }: ContactModalProps) => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const { toast } = useToast();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData(prev => ({
@@ -31,18 +34,40 @@ export const ContactModal = ({ isOpen, onClose }: ContactModalProps) => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    
-    // Reset and close after 2 seconds
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({ name: '', contact: '', message: '' });
-      onClose();
-    }, 2000);
+    try {
+      const { data, error } = await supabase.functions.invoke('send-contact-email', {
+        body: formData
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      console.log('Contact form submitted successfully:', data);
+      setIsSubmitted(true);
+      
+      toast({
+        title: "Заявка отправлена!",
+        description: "Спасибо за обращение. Я свяжусь с вами в ближайшее время.",
+      });
+
+      // Reset and close after 2 seconds
+      setTimeout(() => {
+        setIsSubmitted(false);
+        setFormData({ name: '', contact: '', message: '' });
+        onClose();
+      }, 2000);
+      
+    } catch (error: any) {
+      console.error('Error submitting contact form:', error);
+      toast({
+        title: "Ошибка отправки",
+        description: "Произошла ошибка при отправке заявки. Попробуйте еще раз.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
