@@ -102,37 +102,13 @@ export const Navigation = () => {
 
           {/* CTA Button */}
           <div className="hidden lg:flex items-center gap-3">
-            {user ? (
-              <>
-                {userRole === 'admin' && (
-                  <Link to="/admin">
-                    <Button variant="outline" size="sm" className="gap-2">
-                      <Shield className="w-4 h-4" />
-                      Админ-панель
-                    </Button>
-                  </Link>
-                )}
-                <Link to="/login">
-                  <Button variant="outline" size="sm">
-                    Вход
-                  </Button>
-                </Link>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={signOut}
-                  className="gap-2"
-                >
-                  <LogOut className="w-4 h-4" />
-                  Выйти
+            {user && userRole === 'admin' && (
+              <Link to="/admin">
+                <Button variant="outline" size="sm" className="gap-2">
+                  <Shield className="w-4 h-4" />
+                  Админ-панель
                 </Button>
-              </>
-            ) : (
-                <Link to="/login">
-                  <Button variant="outline" size="sm">
-                    Вход
-                  </Button>
-                </Link>
+              </Link>
             )}
             <Button 
               className="btn-hero px-6 py-2 rounded-lg hover:shadow-glow hover:-translate-y-0.5 transition-all duration-300"
@@ -181,33 +157,11 @@ export const Navigation = () => {
                 </div>
               ))}
             <div className="mt-4 space-y-2">
-              {user ? (
-                <>
-                  {userRole === 'admin' && (
-                    <Link to="/admin" onClick={() => setIsMenuOpen(false)}>
-                      <Button variant="outline" size="sm" className="w-full gap-2">
-                        <Shield className="w-4 h-4" />
-                        Админ-панель
-                      </Button>
-                    </Link>
-                  )}
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={() => {
-                      signOut();
-                      setIsMenuOpen(false);
-                    }}
-                    className="w-full gap-2"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    Выйти
-                  </Button>
-                </>
-              ) : (
-                <Link to="/login" onClick={() => setIsMenuOpen(false)}>
-                  <Button variant="outline" size="sm" className="w-full">
-                    Вход
+              {user && userRole === 'admin' && (
+                <Link to="/admin" onClick={() => setIsMenuOpen(false)}>
+                  <Button variant="outline" size="sm" className="w-full gap-2">
+                    <Shield className="w-4 h-4" />
+                    Админ-панель
                   </Button>
                 </Link>
               )}

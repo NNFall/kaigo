@@ -70,10 +70,10 @@ function AdminSidebar() {
   };
 
   return (
-    <Sidebar>
-      <SidebarContent>
+    <Sidebar className="admin-sidebar">
+      <SidebarContent className="bg-transparent">
         <SidebarGroup>
-          <SidebarGroupLabel className="flex items-center gap-2">
+          <SidebarGroupLabel className="flex items-center gap-2 text-admin-accent-bright font-semibold">
             <Shield className="w-4 h-4" />
             Админ-панель
           </SidebarGroupLabel>
@@ -84,7 +84,7 @@ function AdminSidebar() {
                   <SidebarMenuButton asChild>
                     <Link 
                       to={item.url}
-                      className={location.pathname === item.url ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-muted/50'}
+                      className={`admin-nav-item relative ${location.pathname === item.url ? 'active' : ''}`}
                     >
                       <item.icon className="w-4 h-4" />
                       <span>{item.title}</span>
@@ -104,7 +104,7 @@ function AdminSidebar() {
                   <Button
                     variant="ghost"
                     onClick={handleSignOut}
-                    className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+                    className="admin-logout-btn w-full justify-start"
                   >
                     <LogOut className="w-4 h-4" />
                     <span>Выйти</span>
@@ -122,16 +122,16 @@ function AdminSidebar() {
 export default function AdminLayout() {
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-background">
+      <div className="admin-layout min-h-screen flex w-full">
         <AdminSidebar />
         
         <div className="flex-1 flex flex-col">
-          <header className="h-14 border-b flex items-center px-4 bg-background/95 backdrop-blur-sm">
-            <SidebarTrigger className="mr-4" />
-            <h1 className="font-semibold">Административная панель</h1>
+          <header className="admin-header h-14 flex items-center px-4">
+            <SidebarTrigger className="mr-4 text-admin-text hover:bg-admin-hover" />
+            <h1 className="font-semibold text-admin-text">Административная панель</h1>
           </header>
           
-          <main className="flex-1 p-6">
+          <main className="flex-1 p-6 bg-admin-bg">
             <Outlet />
           </main>
         </div>
