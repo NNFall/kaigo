@@ -24,11 +24,26 @@ export default function Auth() {
   useEffect(() => {
     // Check for password reset tokens in URL
     const checkForPasswordReset = () => {
+      // Check query parameters first (Supabase sends token as query param)
+      const queryParams = new URLSearchParams(location.search);
+      const token = queryParams.get('token');
+      const type = queryParams.get('type');
+      
+      console.log('Checking URL parameters:', { token, type, search: location.search, hash: location.hash });
+      
+      if (token && type === 'recovery') {
+        console.log('Password reset token found in query params');
+        setIsPasswordReset(true);
+        return;
+      }
+      
+      // Fallback: check hash parameters
       const hashParams = new URLSearchParams(location.hash.substring(1));
       const accessToken = hashParams.get('access_token');
-      const type = hashParams.get('type');
+      const hashType = hashParams.get('type');
       
-      if (accessToken && type === 'recovery') {
+      if (accessToken && hashType === 'recovery') {
+        console.log('Password reset token found in hash params');
         setIsPasswordReset(true);
         return;
       }
@@ -57,7 +72,7 @@ export default function Auth() {
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate, location.hash, isPasswordReset]);
+  }, [navigate, location.hash, location.search, isPasswordReset]);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
