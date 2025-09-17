@@ -19,7 +19,7 @@ interface ContactRequest {
 }
 
 export default function AdminPanel() {
-  const { userRole } = useAuth();
+  const { userRole, user } = useAuth();
   const [contacts, setContacts] = useState<ContactRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
@@ -56,6 +56,9 @@ export default function AdminPanel() {
 
   const deleteContact = async (id: string) => {
     try {
+      // Get contact details for audit log
+      const contactToDelete = contacts.find(c => c.id === id);
+      
       const { error } = await supabase
         .from('contact_requests')
         .delete()
@@ -68,6 +71,19 @@ export default function AdminPanel() {
           variant: "destructive",
         });
         return;
+      }
+
+      // Log admin action
+      if (contactToDelete && user) {
+        await supabase
+          .from('admin_audit_log')
+          .insert({
+            admin_user_id: user.id,
+            action: 'DELETE_CONTACT_REQUEST',
+            table_name: 'contact_requests',
+            record_id: id,
+            old_values: contactToDelete as any
+          });
       }
 
       setContacts(contacts.filter(contact => contact.id !== id));
