@@ -1,73 +1,81 @@
-# Welcome to your Lovable project
+# kAIgo
 
-## Project info
+kAIgo - продакшен-сайт-портфолио AI-разработчика, который делает автоматизацию бизнеса, голосовых ассистентов, AI-чат-ботов и кастомные AI-интеграции.
 
-**URL**: https://lovable.dev/projects/35517543-59c7-41d2-affe-58757b0f430b
+![Главный экран kAIgo](https://kaigo.online/docs/screenshots/home-hero.png)
 
-## How can I edit this code?
+## Сайт
 
-There are several ways of editing your application.
+- Продакшен: [https://kaigo.online](https://kaigo.online)
+- Подробный дизайн-обзор: [docs/DESIGN_WALKTHROUGH.md](docs/DESIGN_WALKTHROUGH.md)
 
-**Use Lovable**
+## Что Внутри
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/35517543-59c7-41d2-affe-58757b0f430b) and start prompting.
+- Лендинг с анимированным particle-фоном, typing-effect hero, секциями услуг, каруселью проектов, преимуществами, отзывами, контактной формой и плавающим AI-виджетом.
+- Страница «Обо мне» с позиционированием, подходом к работе, метриками опыта, компетенциями и CTA для связи.
+- Страница проектов с фильтрами, статусами, тегами и переходами в подробные кейсы.
+- Детальные страницы проектов с задачей, решением, стеком технологий, результатами и навигацией между кейсами.
+- Auth и admin-маршруты на базе Supabase.
 
-Changes made via Lovable will be committed automatically to this repo.
+## Скриншоты
 
-**Use your preferred IDE**
+### Главная
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+![Секция навыков](https://kaigo.online/docs/screenshots/home-skills.png)
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Проекты
 
-Follow these steps:
+![Страница проектов](https://kaigo.online/docs/screenshots/projects-page.png)
+
+### AI-Виджет
+
+![AI-виджет](https://kaigo.online/docs/screenshots/ai-widget.png)
+
+Больше скриншотов и описание каждого раздела есть в [docs/DESIGN_WALKTHROUGH.md](docs/DESIGN_WALKTHROUGH.md).
+
+## Технологии
+
+- Vite
+- React 18
+- TypeScript
+- React Router
+- Tailwind CSS
+- shadcn/ui и Radix UI
+- lucide-react
+- Supabase Auth, Database и Edge Functions
+- Recharts для аналитики в админке
+
+## Локальный Запуск
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+npm install
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+Dev-сервер Vite настроен на порт `8080`.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Продакшен-Сборка
 
-**Use GitHub Codespaces**
+```sh
+npm run build
+npm run preview
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Собранный сайт появляется в `dist/`.
 
-## What technologies are used for this project?
+## Основные Маршруты
 
-This project is built with:
+- `/` - главная страница
+- `/about` - страница «Обо мне»
+- `/projects` - портфолио проектов
+- `/project/:id` - детальная страница проекта
+- `/auth` - вход, регистрация и сброс пароля
+- `/login` - вход в админку
+- `/admin` - админ-панель и управление сайтом
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Интеграции
 
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/35517543-59c7-41d2-affe-58757b0f430b) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+- Supabase Auth для сессий и проверки ролей.
+- Supabase-таблицы для заявок, AI-настроек, истории диалогов, сообщений и профилей.
+- Supabase Edge Functions для AI-чата, голосовой транскрибации и отправки контактных email.
+- VseGPT/OpenAI-compatible конфигурация модели для AI-ассистента сайта.
