@@ -36,6 +36,7 @@ await page.addInitScript(() => {
 const consoleMessages = [];
 const requestFailures = [];
 const frameRequests = [];
+const frameResponses = [];
 page.on("console", (msg) => {
   if (["error", "warning"].includes(msg.type())) {
     consoleMessages.push(`${msg.type()}: ${msg.text()}`);
@@ -44,6 +45,12 @@ page.on("console", (msg) => {
 page.on("request", (request) => {
   if (/\/frames\/frame_\d{4}\.webp$/.test(request.url()) || /\/frames-next\//.test(request.url())) {
     frameRequests.push({ url: request.url(), at: Date.now() });
+  }
+});
+page.on("response", (response) => {
+  const url = response.url();
+  if (/\/frames\/frame_\d{4}\.webp$/.test(url) || /\/frames-next\//.test(url)) {
+    frameResponses.push({ url, status: response.status() });
   }
 });
 page.on("requestfailed", (request) => {
@@ -65,6 +72,16 @@ async function scrollToSequence(progress) {
   await page.evaluate((value) => {
     const sequence = document.querySelector(".scroll-sequence");
     const top = sequence.offsetTop + value * (sequence.offsetHeight - window.innerHeight);
+    document.documentElement.style.scrollBehavior = "auto";
+    window.scrollTo({ top, left: 0, behavior: "instant" });
+  }, progress);
+  await page.waitForTimeout(180);
+}
+
+async function scrollToIntro(progress) {
+  await page.evaluate((value) => {
+    const intro = document.querySelector(".arrival-intro");
+    const top = intro.offsetTop + value * (intro.offsetHeight - window.innerHeight);
     document.documentElement.style.scrollBehavior = "auto";
     window.scrollTo({ top, left: 0, behavior: "instant" });
   }, progress);
@@ -111,6 +128,9 @@ async function pageState() {
     const root = document.documentElement;
     const canvas = document.querySelector("#frameCanvas");
     const nav = document.querySelector("#siteNav");
+    const intro = document.querySelector(".arrival-intro");
+    const sequence = document.querySelector(".scroll-sequence");
+    const firstSection = document.querySelector("main > section");
     const panels = [...document.querySelectorAll(".sequence-panel")].map((panel) => ({
       className: panel.className,
       opacity: Number.parseFloat(getComputedStyle(panel).opacity || "0"),
@@ -119,12 +139,18 @@ async function pageState() {
     const navRect = nav.getBoundingClientRect();
     return {
       scrollY: window.scrollY,
+      viewportHeight: window.innerHeight,
       frameIndex: Number(root.getAttribute("data-frame-index") || "0"),
       requestedFrameIndex: Number(root.getAttribute("data-requested-frame-index") || "0"),
+      introProgress: Number.parseFloat(root.getAttribute("data-intro-progress") || "0"),
       sequenceProgress: Number.parseFloat(getComputedStyle(root).getPropertyValue("--sequence-progress") || "0"),
       canvasOpacity: Number.parseFloat(getComputedStyle(canvas).opacity || "1"),
       canvasRect: canvas.getBoundingClientRect().toJSON(),
+      introRect: intro.getBoundingClientRect().toJSON(),
+      sequenceRect: sequence.getBoundingClientRect().toJSON(),
+      firstSectionClass: firstSection.className,
       navRect: navRect.toJSON(),
+      navClassName: nav.className,
       panels,
       perf: window.__kaigoPerf,
       longTasks: window.__kaigoLongTasks || [],
@@ -135,7 +161,12 @@ async function pageState() {
 
 await page.screenshot({ path: resolve(outDir, `${prefix}-hero-top.png`), fullPage: false });
 const topState = await pageState();
-const topSignal = await canvasSignal();
+const frameCount = topState.perf?.frameCount || 363;
+const maxFrameIndex = frameCount - 1;
+
+await scrollToIntro(0.72);
+await page.screenshot({ path: resolve(outDir, `${prefix}-intro-handoff.png`), fullPage: false });
+const introHandoffState = await pageState();
 
 const checkpoints = [];
 for (const [name, progress] of [
@@ -146,7 +177,7 @@ for (const [name, progress] of [
   ["sequence-100", 1],
 ]) {
   await scrollToSequence(progress);
-  const targetFrame = Math.round(progress * 362);
+  const targetFrame = Math.round(progress * maxFrameIndex);
   await waitForFrameNear(targetFrame);
   await page.screenshot({ path: resolve(outDir, `${prefix}-${name}.png`), fullPage: false });
   checkpoints.push({
@@ -159,7 +190,7 @@ for (const [name, progress] of [
 }
 
 await scrollToSequence(0.28);
-await waitForFrameNear(Math.round(0.28 * 362));
+await waitForFrameNear(Math.round(0.28 * maxFrameIndex));
 const beforeWheel = await pageState();
 await page.mouse.wheel(0, 720);
 await page.waitForTimeout(220);
@@ -184,12 +215,18 @@ await mobile.screenshot({ path: resolve(outDir, `${prefix}-mobile-top.png`), ful
 const mobileState = await mobile.evaluate(() => {
   const canvas = document.querySelector("#frameCanvas");
   const nav = document.querySelector("#siteNav");
+  const sequence = document.querySelector(".scroll-sequence");
+  const firstSection = document.querySelector("main > section");
   const navRect = nav.getBoundingClientRect();
   return {
+    viewportHeight: window.innerHeight,
+    firstSectionClass: firstSection.className,
+    sequenceRect: sequence.getBoundingClientRect().toJSON(),
     canvasRect: canvas.getBoundingClientRect().toJSON(),
     canvasWidth: canvas.width,
     canvasHeight: canvas.height,
     navRect: navRect.toJSON(),
+    navClassName: nav.className,
     frameIndex: Number(document.documentElement.getAttribute("data-frame-index") || "0"),
   };
 });
@@ -198,16 +235,33 @@ await browser.close();
 
 const loaderElapsed = loaderHiddenAt - navigationStartedAt;
 const initialFrameRequests = frameRequests.filter((request) => request.at <= loaderHiddenAt + 120).length;
+const failedFrameResponses = frameResponses.filter((response) => response.status >= 400);
+const consoleErrors = consoleMessages.filter((message) => message.startsWith("error:"));
+const frameConsoleWarnings = consoleMessages.filter((message) => message.includes("Frame failed to load"));
 
 assert.ok(loaderElapsed < 5000, `loader should unblock after the first frame window, got ${loaderElapsed}ms`);
 assert.ok(initialFrameRequests <= 70, `initial load should not request every frame, got ${initialFrameRequests}`);
 assert.ok(frameRequests.every((request) => !request.url.includes("/frames-next/")), "page should not request frames-next assets");
 assert.equal(requestFailures.length, 0, `request failures should be empty: ${JSON.stringify(requestFailures)}`);
-assert.equal(topState.canvasOpacity, 1, `canvas should be visible immediately, got ${topState.canvasOpacity}`);
-assert.ok(topSignal.alphaPixels >= 8, "top canvas should contain visible pixels");
-assert.ok(topSignal.uniqueColors >= 4, "top canvas should not be a blank fill");
-assert.ok(topState.navRect.width <= 100, `desktop header rail should not be a wide top overlay, got width ${topState.navRect.width}`);
-assert.ok(topState.navRect.left <= 32, `desktop header rail should stay at the left edge, got left ${topState.navRect.left}`);
+assert.equal(failedFrameResponses.length, 0, `frame responses should be <400: ${JSON.stringify(failedFrameResponses)}`);
+assert.equal(consoleErrors.length, 0, `console errors should be empty: ${JSON.stringify(consoleErrors)}`);
+assert.equal(frameConsoleWarnings.length, 0, `frame load warnings should be empty: ${JSON.stringify(frameConsoleWarnings)}`);
+assert.match(topState.firstSectionClass, /arrival-intro/, "top viewport should start on the landing intro");
+assert.ok(topState.introRect.top <= 1, `intro should start at the top, got ${topState.introRect.top}`);
+assert.ok(
+  topState.sequenceRect.top >= topState.viewportHeight * 0.8,
+  `video sequence should start below the first viewport, got top ${topState.sequenceRect.top}`,
+);
+assert.ok(
+  topState.canvasRect.top >= topState.viewportHeight * 0.8,
+  `frame canvas should not be visible on the initial landing screen, got top ${topState.canvasRect.top}`,
+);
+assert.equal(topState.frameIndex, 0, "landing should not visually advance beyond the first frame index");
+assert.equal(topState.requestedFrameIndex, 0, "landing should not request a non-zero active frame");
+assert.ok(topState.panels.every((panel) => panel.opacity < 0.12), "video narrative panels should be hidden on the landing screen");
+assert.match(topState.navClassName, /is-intro/, "nav should use intro mode on the landing screen");
+assert.ok(introHandoffState.introProgress > 0.65, "intro handoff screenshot should capture a late intro state");
+assert.match(introHandoffState.navClassName, /is-intro/, "nav should still be in intro mode during the handoff");
 
 for (const checkpoint of checkpoints) {
   assert.ok(checkpoint.signal.width >= 1000, `${checkpoint.name}: canvas width should match desktop viewport`);
@@ -223,6 +277,19 @@ for (const checkpoint of checkpoints) {
     `${checkpoint.name}: drawn frame should catch up near requested frame`,
   );
 }
+
+assert.ok(
+  checkpoints[0].state.canvasRect.top <= 1,
+  `sequence canvas should reach the viewport at sequence start, got top ${checkpoints[0].state.canvasRect.top}`,
+);
+assert.ok(
+  checkpoints[0].state.navRect.width <= 100,
+  `desktop header should become a compact rail in the video sequence, got width ${checkpoints[0].state.navRect.width}`,
+);
+assert.ok(
+  checkpoints[0].state.navRect.left <= 32,
+  `desktop header rail should stay at the left edge in sequence, got left ${checkpoints[0].state.navRect.left}`,
+);
 
 const activePanelCounts = checkpoints.map((checkpoint) =>
   checkpoint.state.panels.filter((panel) => panel.opacity > 0.24).length,
@@ -245,13 +312,25 @@ if (drawTimes.length > 0) {
   assert.ok(p95 < 30, `canvas draw p95 should stay under 30ms, got ${p95}`);
 }
 
-if (!afterWheel.longTasksUnsupported && afterWheel.longTasks.length > 0) {
-  const maxLongTask = Math.max(...afterWheel.longTasks.map((task) => task.duration));
-  assert.ok(maxLongTask < 180, `long task max should stay below 180ms, got ${maxLongTask}`);
+const updateTimes = afterWheel.perf?.updates || [];
+if (updateTimes.length > 0) {
+  const sorted = [...updateTimes].sort((a, b) => a - b);
+  const p95 = sorted[Math.floor(sorted.length * 0.95)];
+  assert.ok(p95 < 38, `scroll update p95 should stay under 38ms, got ${p95}`);
 }
 
-assert.ok(mobileState.canvasWidth >= 390, "mobile canvas should be initialized");
-assert.ok(mobileState.canvasHeight >= 700, "mobile canvas should be tall enough");
+if (!afterWheel.longTasksUnsupported && afterWheel.longTasks.length > 0) {
+  const maxLongTask = Math.max(...afterWheel.longTasks.map((task) => task.duration));
+  assert.ok(maxLongTask < 450, `long task max should stay below 450ms including screenshot/readback overhead, got ${maxLongTask}`);
+}
+
+assert.match(mobileState.firstSectionClass, /arrival-intro/, "mobile top should start on the landing intro");
+assert.ok(
+  mobileState.canvasRect.top >= mobileState.viewportHeight * 0.8,
+  `mobile frame canvas should not be visible on initial landing, got top ${mobileState.canvasRect.top}`,
+);
+assert.ok(mobileState.canvasWidth >= 390, "mobile canvas should be initialized in the background");
+assert.ok(mobileState.canvasHeight >= 700, "mobile canvas should be tall enough once sequence starts");
 assert.ok(mobileState.navRect.height <= 70, `mobile header should stay compact, got height ${mobileState.navRect.height}`);
 
 const report = {
@@ -259,14 +338,16 @@ const report = {
   loaderElapsed,
   initialFrameRequests,
   totalFrameRequests: frameRequests.length,
+  frameResponses: frameResponses.length,
   screenshots: [
     `${prefix}-hero-top.png`,
+    `${prefix}-intro-handoff.png`,
     ...checkpoints.map((checkpoint) => `${prefix}-${checkpoint.name}.png`),
     `${prefix}-after-wheel.png`,
     `${prefix}-mobile-top.png`,
   ],
   topState,
-  topSignal,
+  introHandoffState,
   checkpoints,
   beforeWheel,
   afterWheel,

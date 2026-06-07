@@ -1,6 +1,6 @@
 # KAIGO
 
-Current KAIGO scroll-controlled cinematic prototype.
+Current KAIGO cinematic landing prototype with an animated intro and one scroll-controlled video sequence.
 
 ## Structure
 
@@ -11,7 +11,7 @@ Current KAIGO scroll-controlled cinematic prototype.
 - `verification/static-server.mjs` - local static server used by verification
 - `docs/` - plan, operations log, and motion notes
 
-The previous production site is preserved in the Git branch `old-version`.
+The first viewport is an abstract animated KAIGO intro. The frame canvas starts only in the following scroll sequence, so the prototype uses one video source without visually exposing frame 1 as the landing screen. The previous production site is preserved in the Git branch `old-version`.
 
 ## Local Check
 

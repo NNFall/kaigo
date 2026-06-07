@@ -21,37 +21,37 @@
 
 ### Task 1: Intro Structure
 
-- [ ] Insert a full-viewport `.arrival-intro` before `.scroll-sequence`.
-- [ ] Add KAIGO brand, short central phrase, compact nav chips, scroll cue, orbit lines, and transition aperture nodes.
-- [ ] Keep `#frameCanvas` only inside `.scroll-sequence`.
-- [ ] Update smoke test to require `.arrival-intro` and exactly one `.scroll-sequence`.
+- [x] Insert a full-viewport `.arrival-intro` before `.scroll-sequence`.
+- [x] Add KAIGO brand, short central phrase, compact nav chips, scroll cue, orbit lines, and transition aperture nodes.
+- [x] Keep `#frameCanvas` only inside `.scroll-sequence`.
+- [x] Update smoke test to require `.arrival-intro` and exactly one `.scroll-sequence`.
 
 ### Task 2: Intro Motion System
 
-- [ ] Add CSS staged reveal for brand, nav, phrase lines, micro-details, and scroll cue.
-- [ ] Add scroll-linked exit using `--intro-progress`: text splits away, aperture opens, detail lines translate/rotate.
-- [ ] Ensure no layout animation uses `top`, `left`, `width`, or `height`; use transform/opacity.
-- [ ] Add mobile rules so the intro does not overlap or overflow.
+- [x] Add CSS staged reveal for brand, nav, phrase lines, micro-details, and scroll cue.
+- [x] Add scroll-linked exit using `--intro-progress`: text splits away, aperture opens, detail lines translate/rotate.
+- [x] Ensure no layout animation uses `top`, `left`, `width`, or `height`; use transform/opacity.
+- [x] Add mobile rules so the intro does not overlap or overflow.
 
 ### Task 3: JS Scroll Coordination
 
-- [ ] Add `introProgress()` based on `.arrival-intro` geometry.
-- [ ] Set `--intro-progress`, `data-intro-progress`, and nav classes on every scroll frame.
-- [ ] Keep direct `.scroll-sequence` progress to one frame directory.
-- [ ] Start frame preloading after loader readiness so the sequence is ready when the user scrolls.
+- [x] Add `introProgress()` based on `.arrival-intro` geometry.
+- [x] Set `--intro-progress`, `data-intro-progress`, and nav classes on every scroll frame.
+- [x] Keep direct `.scroll-sequence` progress to one frame directory.
+- [x] Start frame preloading after loader readiness so the sequence is ready when the user scrolls.
 
 ### Task 4: Sequence Panel Energy
 
-- [ ] Increase text movement distances and use faster local ranges.
-- [ ] Add word/line mask children where useful without increasing narrative count.
-- [ ] Keep one readable panel per checkpoint and preserve the final panel long enough to read.
-- [ ] Avoid covering the center/right video subject with the nav.
+- [x] Increase text movement distances and use faster local ranges.
+- [x] Add word/line mask children where useful without increasing narrative count.
+- [x] Keep one readable panel per checkpoint and preserve the final panel long enough to read.
+- [x] Avoid covering the center/right video subject with the nav.
 
 ### Task 5: Verification
 
-- [ ] Run `npm run smoke`.
-- [ ] Run local `npm run verify`.
-- [ ] Inspect generated screenshots for top intro, transition, sequence checkpoints, and mobile.
-- [ ] Deploy to `/root/kaigo/site-current`, keeping `/old/`.
-- [ ] Run public `KAIGO_URL=https://kaigo.online KAIGO_PREFIX=public-landing-intro npm run verify`.
-- [ ] Commit and push the resulting changes to `origin/main`.
+- [x] Run `npm run smoke`.
+- [x] Run local `npm run verify`.
+- [x] Inspect generated screenshots for top intro, transition, sequence checkpoints, and mobile.
+- [x] Deploy to `/root/kaigo/site-current`, keeping `/old/`.
+- [x] Run public `KAIGO_URL=https://kaigo.online KAIGO_PREFIX=public-landing-intro npm run verify`.
+- [x] Commit and push the resulting changes to `origin/main`.

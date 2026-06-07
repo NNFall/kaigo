@@ -8,11 +8,13 @@ const SEQUENCE_CONFIG = {
   initialFrame: 0,
 };
 
-const INITIAL_PRELOAD = 12;
+const INITIAL_PRELOAD = 6;
 const PRELOAD_RADIUS = 28;
-const IDLE_BATCH_SIZE = 8;
-const MAX_CONCURRENT_REQUESTS = 5;
-const WARMUP_DELAY_MS = 900;
+const IDLE_BATCH_SIZE = 4;
+const MAX_CONCURRENT_REQUESTS = 4;
+const WARMUP_DELAY_MS = 1200;
+const WARMUP_BACKLOG_LIMIT = 44;
+const INTRO_READY_TIMEOUT_MS = 650;
 
 const doc = document.documentElement;
 const loader = document.getElementById("loader");
@@ -20,6 +22,7 @@ const loaderBar = document.getElementById("loaderBar");
 const loaderText = document.getElementById("loaderText");
 const scrollProgress = document.getElementById("scrollProgress");
 const siteNav = document.getElementById("siteNav");
+const intro = document.querySelector(".arrival-intro");
 const root = document.querySelector(SEQUENCE_CONFIG.rootSelector);
 const canvas = document.querySelector(SEQUENCE_CONFIG.canvasSelector);
 const ctx = canvas.getContext("2d", { alpha: false });
@@ -42,6 +45,7 @@ let activeLoads = 0;
 
 window.__kaigoPerf = {
   draws: [],
+  updates: [],
   requestedFrames: [],
   loadedFrames: 0,
   frameCount: SEQUENCE_CONFIG.frameCount,
@@ -128,7 +132,16 @@ function drainLoadQueue() {
 function loadFrame(index, priority = false) {
   if (index < 0 || index >= SEQUENCE_CONFIG.frameCount) return Promise.resolve(null);
   if (frameCache[index]) return Promise.resolve(frameCache[index]);
-  if (pendingFrames.has(index)) return pendingFrames.get(index);
+  if (pendingFrames.has(index)) {
+    if (priority) {
+      const queuedIndex = loadQueue.findIndex((item) => item.index === index);
+      if (queuedIndex > 0) {
+        const [item] = loadQueue.splice(queuedIndex, 1);
+        loadQueue.unshift(item);
+      }
+    }
+    return pendingFrames.get(index);
+  }
 
   const promise = new Promise((resolve) => {
     const item = { index, resolve };
@@ -146,7 +159,13 @@ function loadFrame(index, priority = false) {
 
 function preloadInitialFrames() {
   const initial = Array.from({ length: INITIAL_PRELOAD }, (_, index) => loadFrame(index, true));
-  Promise.all(initial).then(() => {
+  const introReadyGate = Promise.race([
+    loadFrame(SEQUENCE_CONFIG.initialFrame, true),
+    new Promise((resolve) => window.setTimeout(resolve, INTRO_READY_TIMEOUT_MS)),
+  ]);
+
+  introReadyGate.then(() => {
+    if (isReady) return;
     isReady = true;
     resizeCanvas();
     drawFrame(SEQUENCE_CONFIG.initialFrame);
@@ -154,6 +173,12 @@ function preloadInitialFrames() {
     loader.classList.add("is-hidden");
     updateFromScroll();
     window.setTimeout(scheduleIdleWarmup, WARMUP_DELAY_MS);
+  });
+
+  Promise.all(initial).then(() => {
+    if (isReady) {
+      drawFrame(requestedFrame);
+    }
   });
 }
 
@@ -171,6 +196,7 @@ function scheduleIdleWarmup() {
     while (
       warmIndex < SEQUENCE_CONFIG.frameCount &&
       loadedInBatch < IDLE_BATCH_SIZE &&
+      loadQueue.length < WARMUP_BACKLOG_LIMIT &&
       deadline.timeRemaining() > 2
     ) {
       loadFrame(warmIndex);
@@ -179,7 +205,8 @@ function scheduleIdleWarmup() {
     }
 
     if (warmIndex < SEQUENCE_CONFIG.frameCount) {
-      scheduleIdleWarmup();
+      const delay = loadQueue.length >= WARMUP_BACKLOG_LIMIT ? 180 : 0;
+      window.setTimeout(scheduleIdleWarmup, delay);
     }
   });
 }
@@ -261,6 +288,8 @@ function drawFrame(index) {
   if (!isReady) return;
 
   requestedFrame = clamp(index, 0, SEQUENCE_CONFIG.frameCount - 1);
+  doc.dataset.requestedFrameIndex = String(requestedFrame);
+  doc.setAttribute("data-requested-frame-index", String(requestedFrame));
   preloadAround(requestedFrame);
 
   const drawableIndex = nearestLoadedFrame(requestedFrame);
@@ -275,9 +304,7 @@ function drawFrame(index) {
   const drawTime = performance.now() - startedAt;
 
   doc.dataset.frameIndex = String(drawableIndex);
-  doc.dataset.requestedFrameIndex = String(requestedFrame);
   doc.setAttribute("data-frame-index", String(drawableIndex));
-  doc.setAttribute("data-requested-frame-index", String(requestedFrame));
   window.__kaigoPerf.draws.push(Number(drawTime.toFixed(3)));
   window.__kaigoPerf.requestedFrames.push(requestedFrame);
 
@@ -293,17 +320,24 @@ function sequenceProgress() {
   return clamp(-rect.top / Math.max(1, scrollable));
 }
 
+function introProgress() {
+  if (!intro) return 1;
+  const rect = intro.getBoundingClientRect();
+  const scrollable = intro.offsetHeight - window.innerHeight;
+  return clamp(-rect.top / Math.max(1, scrollable));
+}
+
 function panelOpacity(progress, start, end) {
-  const fadeIn = smoothstep((progress - start) / 0.07);
-  const fadeOut = 1 - smoothstep((progress - (end - 0.08)) / 0.08);
+  const fadeIn = smoothstep((progress - start) / 0.045);
+  const fadeOut = 1 - smoothstep((progress - (end - 0.09)) / 0.07);
   return clamp(fadeIn * fadeOut);
 }
 
 function updatePanels(progress) {
   const sceneData = [
-    { start: -0.05, end: 0.48, step: "01", x: -16, y: 24 },
-    { start: 0.44, end: 0.78, step: "02", x: 24, y: 22 },
-    { start: 0.74, end: 1.18, step: "03", x: -18, y: 22 },
+    { start: 0.03, end: 0.36, step: "01", x: -58, y: 54, rotate: -1.4 },
+    { start: 0.36, end: 0.7, step: "02", x: 110, y: 46, rotate: 1.2 },
+    { start: 0.66, end: 1.18, step: "03", x: -58, y: 38, rotate: -0.8 },
   ];
 
   let active = "01";
@@ -313,7 +347,7 @@ function updatePanels(progress) {
     const local = clamp((progress - scene.start) / Math.max(0.001, scene.end - scene.start));
     const travel = smoothstep(local);
     panel.style.opacity = opacity.toFixed(4);
-    panel.style.transform = `translate3d(${((1 - travel) * scene.x).toFixed(1)}px, ${((1 - travel) * scene.y).toFixed(1)}px, 0)`;
+    panel.style.transform = `translate3d(${((1 - travel) * scene.x).toFixed(1)}px, ${((1 - travel) * scene.y).toFixed(1)}px, 0) rotate(${((1 - travel) * scene.rotate).toFixed(3)}deg)`;
     panel.classList.toggle("is-active", opacity > 0.2);
     if (opacity > 0.28) active = scene.step;
   });
@@ -322,31 +356,46 @@ function updatePanels(progress) {
   setDocVar("--active-scene", active);
 }
 
-function updatePageProgress(progress) {
+function updatePageProgress(sequenceValue, introValue) {
   const max = doc.scrollHeight - window.innerHeight;
   const pagePct = max > 0 ? (window.scrollY / max) * 100 : 0;
   scrollProgress.style.transform = `scaleX(${pagePct / 100})`;
-  siteNav.classList.toggle("is-quiet", progress < 0.06);
-  siteNav.classList.toggle("is-complete", progress > 0.9);
+  const introMode = introValue < 0.92 && window.scrollY < root.offsetTop - 24;
+  siteNav.classList.toggle("is-intro", introMode);
+  siteNav.classList.toggle("is-quiet", !introMode && sequenceValue < 0.06);
+  siteNav.classList.toggle("is-complete", !introMode && sequenceValue > 0.9);
 }
 
 function updateFromScroll() {
+  const updateStartedAt = performance.now();
   ticking = false;
 
   const progress = sequenceProgress();
+  const introValue = introProgress();
   const frameIndex = Math.round(progress * (SEQUENCE_CONFIG.frameCount - 1));
 
+  setDocVar("--intro-progress", introValue.toFixed(5));
   setDocVar("--sequence-progress", progress.toFixed(5));
   setDocVar("--sequence-frame-index", String(frameIndex));
+  if (intro) {
+    intro.style.setProperty("--intro-progress", introValue.toFixed(5));
+  }
   root.style.setProperty("--sequence-progress", progress.toFixed(5));
+  doc.dataset.introProgress = introValue.toFixed(5);
+  doc.setAttribute("data-intro-progress", introValue.toFixed(5));
 
   if (sequenceLine) {
     sequenceLine.style.transform = `scaleY(${progress.toFixed(5)})`;
   }
 
-  updatePageProgress(progress);
+  updatePageProgress(progress, introValue);
   updatePanels(progress);
   drawFrame(frameIndex);
+
+  window.__kaigoPerf.updates.push(Number((performance.now() - updateStartedAt).toFixed(3)));
+  if (window.__kaigoPerf.updates.length > 180) {
+    window.__kaigoPerf.updates.shift();
+  }
 }
 
 function requestScrollUpdate() {
@@ -372,8 +421,11 @@ document.querySelectorAll('a[href^="#"]').forEach((link) => {
 
 setDocVar("--sequence-progress", "0");
 setDocVar("--sequence-frame-index", "0");
+setDocVar("--intro-progress", "0");
+doc.dataset.introProgress = "0";
 doc.dataset.frameIndex = "0";
 doc.dataset.requestedFrameIndex = "0";
+doc.setAttribute("data-intro-progress", "0");
 doc.setAttribute("data-frame-index", "0");
 doc.setAttribute("data-requested-frame-index", "0");
 updateLoader();

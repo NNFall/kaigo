@@ -19,9 +19,10 @@
 
     <div class="scroll-progress" id="scrollProgress"></div>
 
-    <header class="site-nav site-nav--rail" id="siteNav">
+    <header class="site-nav site-nav--rail is-intro" id="siteNav">
       <a class="brand" href="/" aria-label="KAIGO home">KAIGO</a>
       <nav class="nav-links" aria-label="Основная навигация">
+        <a href="#intro" data-label="Старт" aria-label="Старт"></a>
         <a href="#story" data-label="Видео" aria-label="Видео"></a>
         <a href="#systems" data-label="Системы" aria-label="Системы"></a>
         <a href="#contact" data-label="Контакт" aria-label="Контакт"></a>
@@ -31,6 +32,56 @@
     </header>
 
     <main>
+      <section class="arrival-intro" id="intro" aria-label="KAIGO cinematic intro">
+        <div class="arrival-sticky">
+          <div class="arrival-field" aria-hidden="true">
+            <span class="arrival-line arrival-line--one"></span>
+            <span class="arrival-line arrival-line--two"></span>
+            <span class="arrival-line arrival-line--three"></span>
+            <span class="arrival-ring arrival-ring--one"></span>
+            <span class="arrival-ring arrival-ring--two"></span>
+            <span class="arrival-scan arrival-scan--one"></span>
+            <span class="arrival-scan arrival-scan--two"></span>
+          </div>
+
+          <div class="arrival-aperture" aria-hidden="true">
+            <span class="arrival-aperture__panel arrival-aperture__panel--left"></span>
+            <span class="arrival-aperture__panel arrival-aperture__panel--right"></span>
+          </div>
+
+          <div class="arrival-menu" aria-hidden="true">
+            <span>WEB</span>
+            <span>AI</span>
+            <span>VOICE</span>
+          </div>
+
+          <div class="arrival-copy">
+            <p class="arrival-kicker">KAIGO / digital worlds</p>
+            <h1 class="arrival-title" aria-label="Сайты и AI-системы, которые запоминаются">
+              <span style="--i: 0"><b>Сайты</b></span>
+              <span style="--i: 1"><b>и AI-системы,</b></span>
+              <span style="--i: 2"><b>которые</b></span>
+              <span style="--i: 3"><b>запоминаются.</b></span>
+            </h1>
+            <p class="arrival-note">
+              Первый экран не раскрывает сцену сразу. Он собирает внимание, а затем
+              переводит его в scroll-видео.
+            </p>
+          </div>
+
+          <div class="arrival-side" aria-hidden="true">
+            <span>01</span>
+            <i></i>
+            <small>scroll</small>
+          </div>
+
+          <div class="arrival-status" aria-hidden="true">
+            <span>motion prototype</span>
+            <span>single video sequence</span>
+          </div>
+        </div>
+      </section>
+
       <section class="scroll-sequence" id="story" aria-label="KAIGO scroll video">
         <div class="sequence-sticky">
           <canvas class="sequence-canvas" id="frameCanvas" aria-hidden="true"></canvas>
@@ -45,10 +96,10 @@
 
           <div class="sequence-panel sequence-panel--one narrative">
             <p class="eyebrow">01 / kaigo</p>
-            <h1>Сайты и AI-системы, которые запоминаются.</h1>
+            <h2>Сцена раскрывается скроллом.</h2>
             <p>
-              Я собираю визуальный образ, интерфейс и рабочую AI-логику в один
-              цифровой продукт.
+              Один видео-фрагмент ведет первое впечатление: кадр, движение и текст
+              собираются в один ритм.
             </p>
           </div>
 

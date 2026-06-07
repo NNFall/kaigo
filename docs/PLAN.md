@@ -66,25 +66,32 @@ Build a first deployable prototype for `kaigo.online` with a scroll-controlled c
 
 ## Current Iteration
 
-- Latest local iteration: single-video `videokaigo.mp4` scroll sequence, 2026-06-07.
+- Latest local iteration: landing intro plus single-video `videokaigo.mp4` scroll sequence, 2026-06-07.
 - Source video: `C:\Users\User\Downloads\videokaigo.mp4`, `12.1s`, `1920x1080`, `30fps`, `363` frames.
 - Frame output: `prototype/site/frames/frame_0001.webp` through `frame_0363.webp`, scaled to `1440x810`, total about `14.9 MB`.
-- Main change: removed the old `frames-next` two-scene architecture and transparent video reveal. The first viewport is now the scroll video itself with three text moments mapped across the one video.
-- Header change: replaced the wide top header with a compact left rail on desktop and compact top row on mobile, so it no longer covers the key character area.
-- Performance change: the page becomes ready after the first `12` decoded frames, then uses a rolling preload window and a delayed idle warmup for the rest of the sequence.
+- Main change: restored a separate animated landing intro before the video. The first viewport no longer shows the person, the first frame, or the canvas.
+- Video architecture: still one frame directory, one canvas, one `SEQUENCE_CONFIG`, and no `frames-next`.
+- Header change: the header starts as a centered intro strip, then becomes a compact left rail in the video sequence.
+- Performance change: the page becomes ready after the first `6` decoded frames, then uses a rolling preload window, priority promotion, a delayed idle warmup, and a bounded warmup queue.
 - Local verification prefix: `local`
 - Local verification results:
-  - loader unblocked in `367ms`
-  - initial frame requests: `28`
-  - total frame requests after full sweep: `363`
+  - loader unblocked in `210ms`
+  - initial frame requests: `20`
+  - total frame requests during full verification sweep: `301`
+  - intro is the first visible section on desktop and mobile
+  - frame canvas starts below the first viewport
   - wheel test advanced scroll and frame index
   - canvas nonblank at progress `0`, `0.25`, `0.5`, `0.75`, `1`
   - request failures: `[]`
-- Public verification prefix: `public-single-video`
+- Public verification prefix: `public-landing-intro`
 - Public verification results:
-  - loader unblocked in `1774ms`
-  - initial frame requests: `22`
-  - total frame requests after full sweep: `363`
+  - loader unblocked in `1012ms`
+  - initial frame requests: `7`
+  - total frame requests during full verification sweep: `200`
+  - intro is the first visible section on desktop and mobile
+  - frame canvas starts below the first viewport
+  - canvas nonblank at sequence progress `0`, `0.25`, `0.5`, `0.75`, `1`
+  - request failures: `[]`
   - old site remains available at `/old/`, `/old/about`, and `/old/projects`
 
 ## Previous Iteration
@@ -115,4 +122,4 @@ Build a first deployable prototype for `kaigo.online` with a scroll-controlled c
 - Lower sections are intentionally simple placeholders and should be rebuilt with final content/assets.
 - The old site was rebuilt with `/old/` routing support; keep the backup files until the new root is fully approved.
 - Public Playwright verification emits one canvas readback warning from the test's `getImageData` sampling; it is a verification-side warning, not a production rendering error.
-- The two-video scroll mechanics are now in place. The next visual improvement should tune final copy and crop choices per scene after reviewing the public motion in-browser.
+- The single-video mechanics and separate landing intro are now deployed. The next visual improvement should tune final copy, intro art direction, and crop choices after reviewing the public motion in-browser.

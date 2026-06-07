@@ -13,6 +13,101 @@ Date: 2026-06-06
 
 ## Completed Operations
 
+### 2026-06-07 16:40
+
+- Applied the user's correction:
+  - The first screen must be a real landing intro, not the first video frame.
+  - The site must still use one video sequence, not two videos.
+  - The intro should feel dynamic and landing-like before the scroll-video starts.
+- Wrote the design and implementation notes:
+  - `docs/superpowers/specs/2026-06-07-landing-intro-scroll-transition-design.md`
+  - `docs/superpowers/plans/2026-06-07-landing-intro-scroll-transition.md`
+- Used the design/taste guidance in this iteration:
+  - High-variance asymmetric intro instead of a generic centered hero.
+  - No visible person/video/canvas on the first viewport.
+  - One warm red accent, no purple/blue AI gradient.
+  - Motion through `transform` and `opacity`.
+  - No card layout on the first screen.
+  - Compact UI that avoids covering the video subject.
+- Used subagents as requested:
+  - Performance/verification reviewer flagged that tests still assumed the canvas was visible at the top, that frame response status should be checked, and that queued frame requests needed better prioritization.
+  - UX/motion reviewer recommended a separate arrival shell, split `introProgress` and `sequenceProgress`, no second canvas/video, hiding video UI during landing, and making the first video text more compact.
+- Implementation changes:
+  - Added `.arrival-intro` before `.scroll-sequence`.
+  - Kept `#frameCanvas` only inside `.scroll-sequence`.
+  - Added CSS-only intro motion: staggered text reveal, moving rings/lines, small scan markers, aperture-style exit, and intro nav mode.
+  - Changed the first video overlay from a duplicate hero statement to a compact scroll-scene caption.
+  - Added `introProgress()` and `data-intro-progress` in `app.js`.
+  - Kept one `SEQUENCE_CONFIG`, one frame directory, and one canvas.
+  - Reduced initial preload from `12` to `6` frames so the abstract landing appears quickly.
+  - Added queued-frame priority promotion and bounded idle warmup to reduce scroll lag when jumping to later frames.
+- Verification updates:
+  - `prototype/smoke.test.mjs` now asserts that the intro appears before the sequence and that there is still exactly one canvas.
+  - `verification/check-local.mjs` now checks:
+    - top viewport is `.arrival-intro`
+    - canvas is below the first viewport on desktop and mobile
+    - no `frames-next` requests
+    - frame HTTP responses are below `400`
+    - requested frame count is derived from `window.__kaigoPerf.frameCount`
+    - canvas draw p95 and scroll update p95 stay within budget
+- Local verification:
+  - `npm run smoke` passed.
+  - `npm run verify` passed.
+  - Loader unblocked in `210ms`.
+  - Initial frame requests: `20`.
+  - Total frame requests during full verification sweep: `301`.
+  - Canvas nonblank at sequence progress `0`, `0.25`, `0.5`, `0.75`, and `1`.
+  - Wheel advanced from frame `101` to frame `180`.
+  - Request failures: `[]`.
+  - Expected verification-side warning remains: Canvas2D readback warning from `getImageData` sampling.
+- Local screenshots:
+  - `verification/screenshots/local-hero-top.png`
+  - `verification/screenshots/local-intro-handoff.png`
+  - `verification/screenshots/local-sequence-00.png`
+  - `verification/screenshots/local-sequence-25.png`
+  - `verification/screenshots/local-sequence-50.png`
+  - `verification/screenshots/local-sequence-75.png`
+  - `verification/screenshots/local-sequence-100.png`
+  - `verification/screenshots/local-after-wheel.png`
+  - `verification/screenshots/local-mobile-top.png`
+  - `verification/screenshots/local-check-report.json`
+- Server deployment:
+  - Rebuilt `deploy/kaigo-scroll-prototype.zip`.
+  - ZIP check: `368` entries, `363` frames, `0` backslash-path entries.
+  - Uploaded ZIP to `/root/kaigo/deploy/kaigo-scroll-prototype.zip`.
+  - Backed up previous live directory to `/root/kaigo/deploy/backups/site-current-dir.20260607-205150`.
+  - Extracted new prototype to `/root/kaigo/site-current`.
+  - Server live frame count: `363`.
+  - `nginx -t` passed and nginx was reloaded.
+- Public verification:
+  - `KAIGO_URL=https://kaigo.online KAIGO_PREFIX=public-landing-intro KAIGO_POST_LOAD_WAIT=900 npm run verify` passed.
+  - Loader unblocked in `1012ms`.
+  - Initial frame requests: `7`.
+  - Total frame requests during full verification sweep: `200`.
+  - Canvas nonblank at sequence progress `0`, `0.25`, `0.5`, `0.75`, and `1`.
+  - Wheel advanced from frame `101` to frame `180`.
+  - Request failures: `[]`.
+  - Public HTTP checks returned `200` for:
+    - `https://kaigo.online/`
+    - `https://kaigo.online/app.js`
+    - `https://kaigo.online/styles.css`
+    - `https://kaigo.online/frames/frame_0001.webp`
+    - `https://kaigo.online/frames/frame_0363.webp`
+    - `https://kaigo.online/old/`
+    - `https://kaigo.online/old/about`
+    - `https://kaigo.online/old/projects`
+- Public screenshots:
+  - `verification/screenshots/public-landing-intro-hero-top.png`
+  - `verification/screenshots/public-landing-intro-intro-handoff.png`
+  - `verification/screenshots/public-landing-intro-sequence-00.png`
+  - `verification/screenshots/public-landing-intro-sequence-25.png`
+  - `verification/screenshots/public-landing-intro-sequence-50.png`
+  - `verification/screenshots/public-landing-intro-sequence-75.png`
+  - `verification/screenshots/public-landing-intro-sequence-100.png`
+  - `verification/screenshots/public-landing-intro-after-wheel.png`
+  - `verification/screenshots/public-landing-intro-mobile-top.png`
+  - `verification/screenshots/public-landing-intro-check-report.json`
+
 ### 2026-06-07 15:10
 
 - Applied the latest user feedback:
