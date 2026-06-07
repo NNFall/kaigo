@@ -13,6 +13,94 @@ Date: 2026-06-06
 
 ## Completed Operations
 
+### 2026-06-07 15:10
+
+- Applied the latest user feedback:
+  - The previous two-video version felt laggy and too slow.
+  - The site should use the single new video `C:\Users\User\Downloads\videokaigo.mp4`.
+  - The three scenes inside that one video should scrub as one continuous scroll sequence.
+  - Removed the transparent pre-video reveal and old `frames-next` scene.
+  - Moved the header away from a wide top overlay into a compact rail so it does not cover the main video subject.
+- Used the provided taste-skill source from `https://github.com/Leonxlnx/taste-skill/tree/main`:
+  - Read the main taste, redesign, GPT taste, minimalist, brutalist, soft, output, image-to-code, imagegen web, brandkit, and stitch prompts.
+  - Applied the relevant rules: cinematic image-first composition, restrained micro-UI, no generic hero/card layout, motion through `transform`/`opacity`, no heavy blur on scroll, and performance-first animation.
+- Used two subagents as requested:
+  - UX/motion agent recommended one sticky scroll-through video, no `frames-next`, no fade-in gate, and a compact side rail or no hero header.
+  - Performance agent recommended keeping 363 frames only with lazy loading, direct progress-to-frame mapping, no `frameHoldEnd`, no `updateCanvasReveal`, limited preload, and Playwright checks for wheel responsiveness.
+- Video/frame work:
+  - `ffprobe` result: `1920x1080`, `30fps`, `12.1s`, `363` frames.
+  - Generated `363` WebP frames at `1440x810`, quality `70`.
+  - Frame set size: about `14.91 MB`.
+  - Removed `prototype/site/frames-next`.
+  - Generated contact sheet: `verification/screenshots/videokaigo-contact-sheet.jpg`.
+- Implementation changes:
+  - `prototype/site/index.html`: one scroll section, one canvas, three narrative panels.
+  - `prototype/site/app.js`: one `SEQUENCE_CONFIG`, direct scroll progress to frame index, `INITIAL_PRELOAD = 12`, `PRELOAD_RADIUS = 28`, `MAX_CONCURRENT_REQUESTS = 5`, delayed idle warmup.
+  - `prototype/site/styles.css`: compact desktop rail header, compact mobile top header, one-video visual treatment, no Google Fonts dependency.
+  - `verification/static-server.mjs`: reproducible static server for local Playwright checks.
+  - `prototype/smoke.test.mjs`: checks one frame directory, no `frames-next`, frame budget, one canvas, three narrative moments, no old reveal/hold logic.
+  - `verification/check-local.mjs`: checks loader budget, initial frame request count, no `/frames-next/`, canvas nonblank checkpoints, wheel response, header geometry, desktop and mobile screenshots.
+- Fixed a canvas lifecycle bug:
+  - Frame `0` was initially drawn before the canvas resize, setting `currentFrame = 0`.
+  - Resizing cleared the canvas and the next draw was skipped as a duplicate.
+  - Fixed by not drawing before ready and resetting `currentFrame` when canvas size changes.
+- Local verification:
+  - `npm ci` completed with `0` vulnerabilities.
+  - `npm run smoke` passed.
+  - `npm run verify` passed.
+  - Loader unblocked in `367ms` after reducing the startup gate.
+  - Initial frame requests before ready window: `28`.
+  - Total frame requests after full verification sweep: `363`.
+  - Canvas draw p95 stayed below the check budget.
+  - Long task list was empty.
+  - Request failures: `[]`.
+- Local screenshot set:
+  - `verification/screenshots/local-hero-top.png`
+  - `verification/screenshots/local-sequence-00.png`
+  - `verification/screenshots/local-sequence-25.png`
+  - `verification/screenshots/local-sequence-50.png`
+  - `verification/screenshots/local-sequence-75.png`
+  - `verification/screenshots/local-sequence-100.png`
+  - `verification/screenshots/local-after-wheel.png`
+  - `verification/screenshots/local-mobile-top.png`
+  - `verification/screenshots/local-check-report.json`
+- Server deployment:
+  - Uploaded ZIP to `/root/kaigo/deploy/kaigo-scroll-prototype.zip`.
+  - First deploy attempt stopped before replacement because the server does not have `unzip`; current site was not touched during that failed attempt.
+  - Switched server extraction to Python `zipfile`.
+  - Backups made before replacements:
+    - `/root/kaigo/deploy/backups/site-current-dir.20260607-144122`
+    - `/root/kaigo/deploy/backups/site-current-dir.20260607-144901`
+  - Final live directory: `/root/kaigo/site-current`
+  - `nginx -t` passed and nginx was reloaded.
+  - Server live frame count: `363`.
+  - Server ZIP check: `366` entries, `363` frames, `0` `frames-next` entries, `0` backslash-path entries.
+- Public verification:
+  - `KAIGO_URL=https://kaigo.online KAIGO_PREFIX=public-single-video KAIGO_POST_LOAD_WAIT=900 npm run verify` passed.
+  - Loader unblocked in `1774ms`.
+  - Initial frame requests: `22`.
+  - Total frame requests after full sweep: `363`.
+  - Request failures: `[]`.
+  - Public HTTP checks returned `200` for:
+    - `https://kaigo.online/`
+    - `https://kaigo.online/app.js`
+    - `https://kaigo.online/styles.css`
+    - `https://kaigo.online/frames/frame_0001.webp`
+    - `https://kaigo.online/frames/frame_0363.webp`
+    - `https://kaigo.online/old/`
+    - `https://kaigo.online/old/about`
+    - `https://kaigo.online/old/projects`
+  - Public screenshots:
+    - `verification/screenshots/public-single-video-hero-top.png`
+    - `verification/screenshots/public-single-video-sequence-00.png`
+    - `verification/screenshots/public-single-video-sequence-25.png`
+    - `verification/screenshots/public-single-video-sequence-50.png`
+    - `verification/screenshots/public-single-video-sequence-75.png`
+    - `verification/screenshots/public-single-video-sequence-100.png`
+    - `verification/screenshots/public-single-video-after-wheel.png`
+    - `verification/screenshots/public-single-video-mobile-top.png`
+    - `verification/screenshots/public-single-video-check-report.json`
+
 ### 2026-06-06 15:43
 
 - Reviewed the user's feedback on the first deployed scroll prototype.

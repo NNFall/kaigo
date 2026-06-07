@@ -66,6 +66,29 @@ Build a first deployable prototype for `kaigo.online` with a scroll-controlled c
 
 ## Current Iteration
 
+- Latest local iteration: single-video `videokaigo.mp4` scroll sequence, 2026-06-07.
+- Source video: `C:\Users\User\Downloads\videokaigo.mp4`, `12.1s`, `1920x1080`, `30fps`, `363` frames.
+- Frame output: `prototype/site/frames/frame_0001.webp` through `frame_0363.webp`, scaled to `1440x810`, total about `14.9 MB`.
+- Main change: removed the old `frames-next` two-scene architecture and transparent video reveal. The first viewport is now the scroll video itself with three text moments mapped across the one video.
+- Header change: replaced the wide top header with a compact left rail on desktop and compact top row on mobile, so it no longer covers the key character area.
+- Performance change: the page becomes ready after the first `12` decoded frames, then uses a rolling preload window and a delayed idle warmup for the rest of the sequence.
+- Local verification prefix: `local`
+- Local verification results:
+  - loader unblocked in `367ms`
+  - initial frame requests: `28`
+  - total frame requests after full sweep: `363`
+  - wheel test advanced scroll and frame index
+  - canvas nonblank at progress `0`, `0.25`, `0.5`, `0.75`, `1`
+  - request failures: `[]`
+- Public verification prefix: `public-single-video`
+- Public verification results:
+  - loader unblocked in `1774ms`
+  - initial frame requests: `22`
+  - total frame requests after full sweep: `363`
+  - old site remains available at `/old/`, `/old/about`, and `/old/projects`
+
+## Previous Iteration
+
 - Latest deployed iteration: two-video scroll sequence and slower intro motion, 2026-06-07.
 - Implementation plan: `docs/superpowers/plans/2026-06-06-hero-motion-iteration.md`
 - Motion direction: `docs/HERO_MOTION_DIRECTION.md`

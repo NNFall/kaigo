@@ -1,35 +1,18 @@
-const SEQUENCE_CONFIGS = [
-  {
-    rootSelector: ".scroll-sequence--intro",
-    canvasSelector: "#frameCanvas",
-    frameDir: "frames",
-    frameCount: 73,
-    revealStart: 0.02,
-    revealLength: 0.24,
-    frameHoldEnd: 0.58,
-    messageInStart: 0.16,
-    messageInLength: 0.14,
-    messageOutStart: 0.93,
-    messageOutLength: 0.07,
-    desktopZoom: 1.06,
-    mobileZoom: 1.18,
-  },
-  {
-    rootSelector: ".scroll-sequence--next",
-    canvasSelector: "#frameCanvasNext",
-    frameDir: "frames-next",
-    frameCount: 73,
-    revealStart: 0.01,
-    revealLength: 0.22,
-    frameHoldEnd: 0.54,
-    messageInStart: 0.14,
-    messageInLength: 0.14,
-    messageOutStart: 0.92,
-    messageOutLength: 0.08,
-    desktopZoom: 1.06,
-    mobileZoom: 1.18,
-  },
-];
+const SEQUENCE_CONFIG = {
+  rootSelector: ".scroll-sequence",
+  canvasSelector: "#frameCanvas",
+  frameDir: "frames",
+  frameCount: 363,
+  desktopFit: "contain",
+  mobileFit: "cover",
+  initialFrame: 0,
+};
+
+const INITIAL_PRELOAD = 12;
+const PRELOAD_RADIUS = 28;
+const IDLE_BATCH_SIZE = 8;
+const MAX_CONCURRENT_REQUESTS = 5;
+const WARMUP_DELAY_MS = 900;
 
 const doc = document.documentElement;
 const loader = document.getElementById("loader");
@@ -37,30 +20,32 @@ const loaderBar = document.getElementById("loaderBar");
 const loaderText = document.getElementById("loaderText");
 const scrollProgress = document.getElementById("scrollProgress");
 const siteNav = document.getElementById("siteNav");
-const heroArrival = document.querySelector(".hero-arrival");
-const totalFrames = SEQUENCE_CONFIGS.reduce((sum, config) => sum + config.frameCount, 0);
-const sequences = SEQUENCE_CONFIGS.map((config) => {
-  const root = document.querySelector(config.rootSelector);
-  const canvas = document.querySelector(config.canvasSelector);
-  return {
-    ...config,
-    root,
-    canvas,
-    ctx: canvas.getContext("2d"),
-    frames: [],
-    currentFrame: -1,
-    lastProgress: 0,
-    line: root.querySelector(".sequence-progress__line i"),
-  };
-});
+const root = document.querySelector(SEQUENCE_CONFIG.rootSelector);
+const canvas = document.querySelector(SEQUENCE_CONFIG.canvasSelector);
+const ctx = canvas.getContext("2d", { alpha: false });
+const sequenceLine = document.getElementById("sequenceLine");
+const activeStep = document.getElementById("activeStep");
+const panels = [...document.querySelectorAll(".sequence-panel")];
 
-let loadedFrames = 0;
+const frameCache = new Array(SEQUENCE_CONFIG.frameCount);
+const pendingFrames = new Map();
+const loadQueue = [];
+
+let currentFrame = -1;
+let requestedFrame = SEQUENCE_CONFIG.initialFrame;
+let lastDrawnFrame = -1;
 let ticking = false;
 let isReady = false;
+let initialLoaded = 0;
+let warmIndex = INITIAL_PRELOAD;
+let activeLoads = 0;
 
-document.querySelectorAll(".sequence-message h2").forEach((heading) => {
-  heading.textContent = heading.textContent.replace("AI-", "AI\u2011");
-});
+window.__kaigoPerf = {
+  draws: [],
+  requestedFrames: [],
+  loadedFrames: 0,
+  frameCount: SEQUENCE_CONFIG.frameCount,
+};
 
 function clamp(value, min = 0, max = 1) {
   return Math.min(max, Math.max(min, value));
@@ -71,186 +56,297 @@ function smoothstep(value) {
   return t * t * (3 - 2 * t);
 }
 
-function frameSrc(sequence, index) {
-  return `/${sequence.frameDir}/frame_${String(index + 1).padStart(4, "0")}.webp`;
+function frameSrc(index) {
+  return `/${SEQUENCE_CONFIG.frameDir}/frame_${String(index + 1).padStart(4, "0")}.webp`;
 }
 
 function setDocVar(name, value) {
   doc.style.setProperty(name, value);
 }
 
-function setSequenceVar(sequence, name, value) {
-  sequence.root.style.setProperty(name, value);
+function updateLoader() {
+  const pct = Math.round((initialLoaded / INITIAL_PRELOAD) * 100);
+  loaderBar.style.width = `${pct}%`;
+  loaderText.textContent = `Готовлю первые кадры ${pct}%`;
 }
 
-function updateLoader() {
-  const pct = Math.round((loadedFrames / totalFrames) * 100);
-  loaderBar.style.width = `${pct}%`;
-  loaderText.textContent = `Loading cinematic frames ${pct}%`;
-
-  if (loadedFrames >= totalFrames && !isReady) {
-    isReady = true;
-    resizeCanvases();
-    sequences.forEach((sequence) => drawFrame(sequence, 0));
-    requestAnimationFrame(() => {
-      document.body.classList.add("is-ready");
-      loader.classList.add("is-hidden");
-      updateFromScroll();
-    });
+function markLoaded(index, img) {
+  frameCache[index] = img;
+  pendingFrames.delete(index);
+  window.__kaigoPerf.loadedFrames += 1;
+  if (index < INITIAL_PRELOAD) {
+    initialLoaded += 1;
+    updateLoader();
   }
 }
 
-function preloadFrames() {
-  sequences.forEach((sequence) => {
-    for (let i = 0; i < sequence.frameCount; i += 1) {
-      const img = new Image();
-      img.decoding = "async";
-      img.onload = () => {
-        loadedFrames += 1;
-        updateLoader();
+function loadImage(index) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.decoding = "async";
+    img.onload = () => {
+      const finish = () => {
+        markLoaded(index, img);
+        if (isReady && (index === requestedFrame || index === SEQUENCE_CONFIG.initialFrame)) {
+          requestAnimationFrame(() => drawFrame(requestedFrame));
+        }
+        resolve(img);
       };
-      img.onerror = () => {
-        loadedFrames += 1;
-        console.warn(`Frame failed to load: ${img.src}`);
+
+      if (typeof img.decode === "function") {
+        img.decode().then(finish).catch(finish);
+      } else {
+        finish();
+      }
+    };
+    img.onerror = () => {
+      pendingFrames.delete(index);
+      if (index < INITIAL_PRELOAD) {
+        initialLoaded += 1;
         updateLoader();
-      };
-      img.src = frameSrc(sequence, i);
-      sequence.frames.push(img);
+      }
+      console.warn(`Frame failed to load: ${img.src}`);
+      resolve(null);
+    };
+    img.src = frameSrc(index);
+  });
+}
+
+function drainLoadQueue() {
+  while (activeLoads < MAX_CONCURRENT_REQUESTS && loadQueue.length > 0) {
+    const item = loadQueue.shift();
+    activeLoads += 1;
+    loadImage(item.index)
+      .then(item.resolve)
+      .finally(() => {
+        activeLoads -= 1;
+        drainLoadQueue();
+      });
+  }
+}
+
+function loadFrame(index, priority = false) {
+  if (index < 0 || index >= SEQUENCE_CONFIG.frameCount) return Promise.resolve(null);
+  if (frameCache[index]) return Promise.resolve(frameCache[index]);
+  if (pendingFrames.has(index)) return pendingFrames.get(index);
+
+  const promise = new Promise((resolve) => {
+    const item = { index, resolve };
+    if (priority) {
+      loadQueue.unshift(item);
+    } else {
+      loadQueue.push(item);
+    }
+    drainLoadQueue();
+  });
+
+  pendingFrames.set(index, promise);
+  return promise;
+}
+
+function preloadInitialFrames() {
+  const initial = Array.from({ length: INITIAL_PRELOAD }, (_, index) => loadFrame(index, true));
+  Promise.all(initial).then(() => {
+    isReady = true;
+    resizeCanvas();
+    drawFrame(SEQUENCE_CONFIG.initialFrame);
+    document.body.classList.add("is-ready");
+    loader.classList.add("is-hidden");
+    updateFromScroll();
+    window.setTimeout(scheduleIdleWarmup, WARMUP_DELAY_MS);
+  });
+}
+
+function scheduleIdle(callback) {
+  if ("requestIdleCallback" in window) {
+    window.requestIdleCallback(callback, { timeout: 900 });
+    return;
+  }
+  window.setTimeout(() => callback({ timeRemaining: () => 12 }), 60);
+}
+
+function scheduleIdleWarmup() {
+  scheduleIdle((deadline) => {
+    let loadedInBatch = 0;
+    while (
+      warmIndex < SEQUENCE_CONFIG.frameCount &&
+      loadedInBatch < IDLE_BATCH_SIZE &&
+      deadline.timeRemaining() > 2
+    ) {
+      loadFrame(warmIndex);
+      warmIndex += 1;
+      loadedInBatch += 1;
+    }
+
+    if (warmIndex < SEQUENCE_CONFIG.frameCount) {
+      scheduleIdleWarmup();
     }
   });
 }
 
-function resizeCanvases() {
-  const dpr = window.devicePixelRatio || 1;
-  sequences.forEach((sequence) => {
-    sequence.canvas.width = Math.round(window.innerWidth * dpr);
-    sequence.canvas.height = Math.round(window.innerHeight * dpr);
-    sequence.canvas.style.width = `${window.innerWidth}px`;
-    sequence.canvas.style.height = `${window.innerHeight}px`;
-    const index =
-      sequence.currentFrame >= 0
-        ? sequence.currentFrame
-        : Math.floor(updateFrameHoldProgress(sequence.lastProgress, sequence.frameHoldEnd) * (sequence.frameCount - 1));
-    drawFrame(sequence, index);
-  });
+function preloadAround(index) {
+  for (let offset = 0; offset <= PRELOAD_RADIUS; offset += 1) {
+    const priority = offset <= 6;
+    loadFrame(index - offset, priority);
+    if (offset !== 0) loadFrame(index + offset, priority);
+  }
 }
 
-function drawFrame(sequence, index) {
-  const img = sequence.frames[index];
-  if (!img || !img.complete || img.naturalWidth === 0) return;
+function nearestLoadedFrame(index) {
+  if (frameCache[index]) return index;
 
-  sequence.currentFrame = index;
-  const { canvas, ctx } = sequence;
+  for (let radius = 1; radius <= PRELOAD_RADIUS; radius += 1) {
+    const before = index - radius;
+    const after = index + radius;
+    if (before >= 0 && frameCache[before]) return before;
+    if (after < SEQUENCE_CONFIG.frameCount && frameCache[after]) return after;
+  }
+
+  return lastDrawnFrame >= 0 ? lastDrawnFrame : SEQUENCE_CONFIG.initialFrame;
+}
+
+function resizeCanvas() {
+  const dprCap = window.innerWidth < 720 ? 1.25 : 1.5;
+  const dpr = Math.min(window.devicePixelRatio || 1, dprCap);
+  const width = Math.round(window.innerWidth * dpr);
+  const height = Math.round(window.innerHeight * dpr);
+
+  if (canvas.width !== width || canvas.height !== height) {
+    canvas.width = width;
+    canvas.height = height;
+    canvas.style.width = `${window.innerWidth}px`;
+    canvas.style.height = `${window.innerHeight}px`;
+    currentFrame = -1;
+  }
+
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
+  drawFrame(requestedFrame);
+}
+
+function drawContainedImage(img) {
   const cw = canvas.width;
   const ch = canvas.height;
   const imgRatio = img.naturalWidth / img.naturalHeight;
   const canvasRatio = cw / ch;
-  const isMobile = window.innerWidth < 780;
-  const zoom = isMobile ? sequence.mobileZoom : sequence.desktopZoom;
+  const isMobile = window.innerWidth < 720;
+  const fit = isMobile ? SEQUENCE_CONFIG.mobileFit : SEQUENCE_CONFIG.desktopFit;
   let drawW;
   let drawH;
 
-  if (canvasRatio > imgRatio) {
-    drawW = cw * zoom;
+  if (fit === "contain") {
+    if (canvasRatio > imgRatio) {
+      drawH = ch;
+      drawW = drawH * imgRatio;
+    } else {
+      drawW = cw;
+      drawH = drawW / imgRatio;
+    }
+  } else if (canvasRatio > imgRatio) {
+    drawW = cw;
     drawH = drawW / imgRatio;
   } else {
-    drawH = ch * zoom;
+    drawH = ch;
     drawW = drawH * imgRatio;
   }
 
   const drawX = (cw - drawW) / 2;
   const drawY = (ch - drawH) / 2;
-  ctx.clearRect(0, 0, cw, ch);
+  ctx.fillStyle = "#17120f";
+  ctx.fillRect(0, 0, cw, ch);
   ctx.drawImage(img, drawX, drawY, drawW, drawH);
 }
 
-function getSequenceProgress(sequence) {
-  const rect = sequence.root.getBoundingClientRect();
-  const scrollable = sequence.root.offsetHeight - window.innerHeight;
+function drawFrame(index) {
+  if (!isReady) return;
+
+  requestedFrame = clamp(index, 0, SEQUENCE_CONFIG.frameCount - 1);
+  preloadAround(requestedFrame);
+
+  const drawableIndex = nearestLoadedFrame(requestedFrame);
+  const img = frameCache[drawableIndex];
+  if (!img || !img.complete || img.naturalWidth === 0) return;
+  if (drawableIndex === currentFrame && canvas.width > 0) return;
+
+  const startedAt = performance.now();
+  currentFrame = drawableIndex;
+  lastDrawnFrame = drawableIndex;
+  drawContainedImage(img);
+  const drawTime = performance.now() - startedAt;
+
+  doc.dataset.frameIndex = String(drawableIndex);
+  doc.dataset.requestedFrameIndex = String(requestedFrame);
+  doc.setAttribute("data-frame-index", String(drawableIndex));
+  doc.setAttribute("data-requested-frame-index", String(requestedFrame));
+  window.__kaigoPerf.draws.push(Number(drawTime.toFixed(3)));
+  window.__kaigoPerf.requestedFrames.push(requestedFrame);
+
+  if (window.__kaigoPerf.draws.length > 180) {
+    window.__kaigoPerf.draws.shift();
+    window.__kaigoPerf.requestedFrames.shift();
+  }
+}
+
+function sequenceProgress() {
+  const rect = root.getBoundingClientRect();
+  const scrollable = root.offsetHeight - window.innerHeight;
   return clamp(-rect.top / Math.max(1, scrollable));
 }
 
-function updateFrameHoldProgress(progress, holdEnd = 0.58) {
-  return clamp(progress / holdEnd);
+function panelOpacity(progress, start, end) {
+  const fadeIn = smoothstep((progress - start) / 0.07);
+  const fadeOut = 1 - smoothstep((progress - (end - 0.08)) / 0.08);
+  return clamp(fadeIn * fadeOut);
 }
 
-function updateIntroProgress() {
-  const heroHeight = heroArrival.offsetHeight;
-  const raw = window.scrollY / Math.max(1, heroHeight * 0.94);
-  const progress = clamp(raw);
-  const eased = smoothstep(progress);
+function updatePanels(progress) {
+  const sceneData = [
+    { start: -0.05, end: 0.48, step: "01", x: -16, y: 24 },
+    { start: 0.44, end: 0.78, step: "02", x: 24, y: 22 },
+    { start: 0.74, end: 1.18, step: "03", x: -18, y: 22 },
+  ];
 
-  setDocVar("--intro-progress", progress.toFixed(4));
-  setDocVar("--intro-scale", (1.08 - eased * 0.055).toFixed(4));
-  setDocVar("--intro-copy-y", `${(-94 * eased).toFixed(1)}px`);
-  setDocVar("--intro-copy-opacity", clamp(1 - progress * 1.28).toFixed(4));
-  setDocVar("--intro-backdrop-opacity", (1 - eased * 0.06).toFixed(4));
-  setDocVar("--intro-light-opacity", (0.92 - eased * 0.26).toFixed(4));
-  setDocVar("--nav-y", `${(-12 * eased).toFixed(1)}px`);
-  setDocVar("--nav-link-y", `${(eased * -4).toFixed(1)}px`);
-  setDocVar("--nav-scale", (1 - eased * 0.038).toFixed(4));
-  setDocVar("--nav-sheen-x", `${(-110 + eased * 180).toFixed(1)}%`);
+  let active = "01";
+  panels.forEach((panel, index) => {
+    const scene = sceneData[index];
+    const opacity = panelOpacity(progress, scene.start, scene.end);
+    const local = clamp((progress - scene.start) / Math.max(0.001, scene.end - scene.start));
+    const travel = smoothstep(local);
+    panel.style.opacity = opacity.toFixed(4);
+    panel.style.transform = `translate3d(${((1 - travel) * scene.x).toFixed(1)}px, ${((1 - travel) * scene.y).toFixed(1)}px, 0)`;
+    panel.classList.toggle("is-active", opacity > 0.2);
+    if (opacity > 0.28) active = scene.step;
+  });
+
+  activeStep.textContent = active;
+  setDocVar("--active-scene", active);
 }
 
-function updateCanvasReveal(sequence, progress) {
-  const reveal = smoothstep((progress - sequence.revealStart) / sequence.revealLength);
-  setSequenceVar(sequence, "--canvas-reveal", reveal.toFixed(4));
-  return reveal;
-}
-
-function updateSequenceMessage(sequence, progress) {
-  const fadeIn = smoothstep((progress - sequence.messageInStart) / sequence.messageInLength);
-  const fadeOut = 1 - smoothstep((progress - sequence.messageOutStart) / sequence.messageOutLength);
-  const opacity = clamp(fadeIn * fadeOut);
-  const travel = smoothstep(clamp(progress / 0.62));
-
-  setSequenceVar(sequence, "--sequence-message-opacity", opacity.toFixed(4));
-  setSequenceVar(sequence, "--sequence-message-x", `${(42 - travel * 52).toFixed(1)}px`);
-  setSequenceVar(sequence, "--sequence-message-y", `${(28 - travel * 36).toFixed(1)}px`);
-}
-
-function updateSequenceProgress(sequence) {
-  const progress = getSequenceProgress(sequence);
-  const frameProgress = updateFrameHoldProgress(progress, sequence.frameHoldEnd);
-  const frameEase = smoothstep(frameProgress);
-  const reveal = updateCanvasReveal(sequence, progress);
-  const transitionOpacity = 1 - smoothstep((progress - 0.04) / 0.3);
-
-  sequence.lastProgress = progress;
-  setSequenceVar(sequence, "--sequence-progress", progress.toFixed(4));
-  setSequenceVar(sequence, "--sequence-frame-progress", frameProgress.toFixed(4));
-  setSequenceVar(sequence, "--sequence-frame-scale", (1.052 - frameEase * 0.042).toFixed(4));
-  setSequenceVar(sequence, "--sequence-frame-y", `${(-18 * frameEase).toFixed(1)}px`);
-  setSequenceVar(sequence, "--sequence-transition-opacity", (transitionOpacity * (1 - reveal * 0.62)).toFixed(4));
-  setSequenceVar(sequence, "--sequence-transition-y", `${(-34 * smoothstep(progress)).toFixed(1)}px`);
-  updateSequenceMessage(sequence, progress);
-
-  if (sequence.line) {
-    sequence.line.style.height = `${Math.round(progress * 100)}%`;
-  }
-
-  const frameIndex = Math.min(
-    sequence.frameCount - 1,
-    Math.max(0, Math.round(frameProgress * (sequence.frameCount - 1))),
-  );
-
-  if (frameIndex !== sequence.currentFrame) {
-    drawFrame(sequence, frameIndex);
-  }
-}
-
-function updatePageProgress() {
+function updatePageProgress(progress) {
   const max = doc.scrollHeight - window.innerHeight;
-  const pct = max > 0 ? (window.scrollY / max) * 100 : 0;
-  scrollProgress.style.width = `${pct}%`;
-  siteNav.classList.toggle("is-compact", window.scrollY > 120);
+  const pagePct = max > 0 ? (window.scrollY / max) * 100 : 0;
+  scrollProgress.style.transform = `scaleX(${pagePct / 100})`;
+  siteNav.classList.toggle("is-quiet", progress < 0.06);
+  siteNav.classList.toggle("is-complete", progress > 0.9);
 }
 
 function updateFromScroll() {
   ticking = false;
-  updatePageProgress();
-  updateIntroProgress();
-  sequences.forEach(updateSequenceProgress);
+
+  const progress = sequenceProgress();
+  const frameIndex = Math.round(progress * (SEQUENCE_CONFIG.frameCount - 1));
+
+  setDocVar("--sequence-progress", progress.toFixed(5));
+  setDocVar("--sequence-frame-index", String(frameIndex));
+  root.style.setProperty("--sequence-progress", progress.toFixed(5));
+
+  if (sequenceLine) {
+    sequenceLine.style.transform = `scaleY(${progress.toFixed(5)})`;
+  }
+
+  updatePageProgress(progress);
+  updatePanels(progress);
+  drawFrame(frameIndex);
 }
 
 function requestScrollUpdate() {
@@ -261,7 +357,7 @@ function requestScrollUpdate() {
 
 window.addEventListener("scroll", requestScrollUpdate, { passive: true });
 window.addEventListener("resize", () => {
-  resizeCanvases();
+  resizeCanvas();
   requestScrollUpdate();
 });
 
@@ -274,11 +370,11 @@ document.querySelectorAll('a[href^="#"]').forEach((link) => {
   });
 });
 
-setDocVar("--intro-progress", "0");
-sequences.forEach((sequence) => {
-  setSequenceVar(sequence, "--sequence-progress", "0");
-  setSequenceVar(sequence, "--sequence-frame-progress", "0");
-  setSequenceVar(sequence, "--canvas-reveal", "0");
-  setSequenceVar(sequence, "--sequence-transition-opacity", "1");
-});
-preloadFrames();
+setDocVar("--sequence-progress", "0");
+setDocVar("--sequence-frame-index", "0");
+doc.dataset.frameIndex = "0";
+doc.dataset.requestedFrameIndex = "0";
+doc.setAttribute("data-frame-index", "0");
+doc.setAttribute("data-requested-frame-index", "0");
+updateLoader();
+preloadInitialFrames();
