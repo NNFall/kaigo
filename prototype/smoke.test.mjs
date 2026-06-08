@@ -8,12 +8,14 @@ const siteDir = join(testDir, "site");
 const indexPath = join(siteDir, "index.html");
 const stylesPath = join(siteDir, "styles.css");
 const appPath = join(siteDir, "app.js");
+const faviconPath = join(siteDir, "favicon.svg");
 const framesDir = join(siteDir, "frames");
 const framesNextDir = join(siteDir, "frames-next");
 
 assert.equal(existsSync(indexPath), true, "site/index.html should exist");
 assert.equal(existsSync(stylesPath), true, "site/styles.css should exist");
 assert.equal(existsSync(appPath), true, "site/app.js should exist");
+assert.equal(existsSync(faviconPath), true, "site/favicon.svg should exist");
 assert.equal(existsSync(framesDir), true, "site/frames should exist");
 assert.equal(existsSync(framesNextDir), false, "site/frames-next should be removed for the one-video concept");
 
@@ -31,9 +33,15 @@ assert.ok(maxFrameBytes <= 100 * 1024, `largest frame should stay under 100 KB, 
 const html = readFileSync(indexPath, "utf8");
 const js = readFileSync(appPath, "utf8");
 const css = readFileSync(stylesPath, "utf8");
+const favicon = readFileSync(faviconPath, "utf8");
 
 const configuredFrameCount = Number(js.match(/frameCount:\s*(\d+)/)?.[1]);
 assert.equal(configuredFrameCount, frames.length, "JS frameCount should match generated frame assets");
+
+assert.match(html, /rel="icon"\s+href="\/favicon\.svg"\s+type="image\/svg\+xml"/, "HTML should link the SVG favicon");
+assert.match(favicon, /<svg\b/, "favicon should be an SVG asset");
+assert.match(favicon, /#b33430/, "favicon should use the KAIGO red accent");
+assert.ok(statSync(faviconPath).size <= 4096, "favicon should stay lightweight");
 
 assert.match(html, /class="[^"]*\bsequence-canvas\b/, "HTML should include the scroll frame canvas");
 assert.match(html, /id="frameCanvas"/, "HTML should use one canvas for the single video sequence");

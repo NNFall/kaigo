@@ -13,6 +13,18 @@ Date: 2026-06-06
 
 ## Completed Operations
 
+### 2026-06-08 favicon
+
+- Added a lightweight SVG favicon for the browser tab:
+  - `prototype/site/favicon.svg`
+  - `prototype/site/index.html` now links `/favicon.svg` and sets the tab theme color.
+- Added smoke coverage so the icon link and asset cannot silently disappear.
+- Deployed to `https://kaigo.online/`:
+  - Server backup: `/root/kaigo/deploy/backups/site-current-dir.20260608-101208`
+  - ZIP check: `369` entries, `363` frames, `favicon.svg` present, `0` backslash-path entries.
+  - Public check: `/` returned `200` and includes `/favicon.svg`.
+  - Public check: `/favicon.svg` returned `200 image/svg+xml`, `736` bytes.
+
 ### 2026-06-07 16:40
 
 - Applied the user's correction:
